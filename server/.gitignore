@@ -1,0 +1,46 @@
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+lib-cov
+coverage
+.nyc_output
+.jest
+
+# Typescript
+*.tsbuildinfo
+
+# IDEs and editors
+.vscode
+.idea
+.project
+.settings
+*.sublime-workspace
+*.sublime-project
+.sourcemaps
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# dotenv environment file
+.env
+
+# Yarn
+yarn-error.log
+yarn.lock
+
+# NPM
+npm-debug.log
+npm-debug.log.*
