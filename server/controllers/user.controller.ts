@@ -10,6 +10,8 @@ import ejs from 'ejs';
 import path from "path";
 import sendMail from "../utils/sendMail";
 import UserRegisterAuthRequest from "../interfaces/userRegisterAuthRequest.interface";
+import { sendToken } from "../utils/jwt";
+import LoginRequest from "../interfaces/loginRequest.interface";
 
 export const createUserAuthenticationSecret = (user: RegistrationBody): UserAuthenticationSecret => {
     const activationCode: string = Math.floor(1000 + Math.random() * 9000).toString();
@@ -108,6 +110,45 @@ export const activateUser = CatchAsyncError(async (req: Request, res: Response, 
             success: true
         })
 
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const login = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, password } = req.body as LoginRequest;
+
+        if(!email || !password) {
+            return next(new GlobalErrorHandler('Please enter email and password', 400));
+        }
+
+        const user = await userModel.findOne({email}).select("+password");
+
+        if(!user) {
+            return next(new GlobalErrorHandler('Invalid email or password', 400));
+        }
+
+        const isPasswordValid = await user.comparePassword(password);
+        if(!isPasswordValid) {
+            return next(new GlobalErrorHandler('Invalid email or password', 400));
+        }
+
+        sendToken(user, 200, res);
+
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const logout = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        res.cookie("access_token", "", { maxAge: 1 });
+        res.cookie("refresh_token", "", { maxAge: 1 });
+        res.status(200).json({
+            success: true,
+            message: 'Logout successfull'
+        })
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 400));
     }

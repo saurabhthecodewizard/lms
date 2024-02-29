@@ -1,3 +1,5 @@
+require('dotenv').config();
+import jwt from 'jsonwebtoken';
 import mongoose, { Document, Model, Schema } from "mongoose";
 import { hash as hashPassword, compare as comparePassword } from 'bcryptjs';
 
@@ -17,6 +19,8 @@ export interface User extends Document {
     isAuthenticated: boolean;
     courses: Array<{ courseId: string }>;
     comparePassword: (password: string) => Promise<boolean>;
+    accessToken: () => string;
+    refreshToken: () => string;
 }
 
 const userSchema: Schema<User> = new mongoose.Schema({
@@ -73,6 +77,20 @@ userSchema.pre<User>('save', async function (next) {
     this.password = await hashPassword(this.password, 10);
     next();
 });
+
+// access token
+userSchema.methods.accessToken = function () {
+    return jwt.sign({
+        id: this._id
+    }, process.env.ACCESS_TOKEN as string);
+};
+
+// refresh token
+userSchema.methods.refreshToken = function () {
+    return jwt.sign({
+        id: this._id
+    }, process.env.REFRESH_TOKEN as string);
+};
 
 // compare password
 userSchema.methods.comparePassword = async function (inputPassword: string) {
