@@ -10,7 +10,7 @@ userRouter.post('/activate', activateUser);
 
 userRouter.post('/login', login);
 
-userRouter.get('/logout', isAuthenticated, authorizeRoles("admin"), logout);
+userRouter.get('/logout', isAuthenticated, logout);
 
 userRouter.get('/refresh', updateAccessToken);
 

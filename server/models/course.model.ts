@@ -1,19 +1,19 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
-export interface Comment extends Document {
+interface Comment extends Document {
     user: object;
     comment: string;
     replies?: Comment[];
 }
 
-export interface Review extends Document {
+interface Review extends Document {
     user: object;
     rating: number;
     comment: string;
     replies: Comment[];
 }
 
-export interface Link extends Document {
+interface Link extends Document {
     title: string;
     url: string;
 }
@@ -31,7 +31,7 @@ interface CourseData extends Document {
     questions: Comment[];
 }
 
-interface Course extends Document {
+export interface Course extends Document {
     name: string;
     description: string;
     price: number;
@@ -103,12 +103,10 @@ const courseSchema = new Schema<Course>({
     },
     thumbnail: {
         public_id: {
-            type: String,
-            required: true
+            type: String
         },
         url: {
-            type: String,
-            required: true
+            type: String
         }
     },
     tags: {
@@ -139,4 +137,4 @@ const courseSchema = new Schema<Course>({
 
 const CourseModel: Model<Course> = mongoose.model("COurse", courseSchema);
 
-export default CourseModel;
+export default CourseModel
