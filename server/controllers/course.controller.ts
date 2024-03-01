@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import GlobalErrorHandler from "../utils/ErrorHandler";
 import cloudinary from 'cloudinary';
-import { createCourse, getAllCourses, getCourseDetails, updateCourse } from "../services/course.service";
+import { createCourse, getAllCourses, getCourseById, getCourseDetails, updateCourse } from "../services/course.service";
 import { redis } from "../utils/redis";
 
 
@@ -107,6 +107,28 @@ export const getAllAvailableCourses = CatchAsyncError(async (_req: Request, res:
                 courses
             });
         }
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const getEnrolledCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const allEnrolledCourses = req.user?.courses;
+        const requestedCourseId = req.params.id;
+
+        const isCourseExists = allEnrolledCourses?.some((course: any) => course._id.toString() === requestedCourseId);
+        if (!isCourseExists) {
+            return next(new GlobalErrorHandler("Course not found!", 404));
+        }
+
+        const course = await getCourseById(requestedCourseId);
+        const courseContent = course?.courseData;
+
+        res.status(200).json({
+            success: true,
+            content: courseContent
+        });
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 400));
     }

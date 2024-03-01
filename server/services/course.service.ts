@@ -20,3 +20,5 @@ export const getCourseDetails = (courseId: string) => CourseModel.findById(cours
 export const getAllCourses = () => CourseModel.find().select(
     "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
 );
+
+export const getCourseById = (courseId: string) => CourseModel.findById(courseId);
