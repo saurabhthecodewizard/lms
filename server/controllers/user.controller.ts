@@ -5,14 +5,16 @@ import GlobalErrorHandler from "../utils/ErrorHandler";
 import userModel, { User } from "../models/user.model";
 import RegistrationBody from "../interfaces/registrationBody.interface";
 import UserAuthenticationSecret from "../interfaces/userAuthenticationSecret.interface";
-import jwt, { Secret } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import ejs from 'ejs';
 import path from "path";
 import sendMail from "../utils/sendMail";
 import UserRegisterAuthRequest from "../interfaces/userRegisterAuthRequest.interface";
-import { sendToken } from "../utils/jwt";
+import { sendToken, tokenOptions } from "../utils/jwt";
 import LoginRequest from "../interfaces/loginRequest.interface";
 import { redis } from "../utils/redis";
+import { getUserByEmail, getUserByEmailWithPass, getUserById } from "../services/user.service";
+import ExternalAuth from "../interfaces/externalAuth.interface";
 
 export const createUserAuthenticationSecret = (user: RegistrationBody): UserAuthenticationSecret => {
     const activationCode: string = Math.floor(1000 + Math.random() * 9000).toString();
@@ -33,7 +35,7 @@ export const register = CatchAsyncError(async (req: Request, res: Response, next
     try {
         const { firstName, lastName, email, password } = req.body;
 
-        const isEmailDuplicate = await userModel.findOne({ email });
+        const isEmailDuplicate = await getUserByEmail(email);
         if (isEmailDuplicate) {
             return next(new GlobalErrorHandler("Email already exists", 400));
         }
@@ -95,7 +97,7 @@ export const activateUser = CatchAsyncError(async (req: Request, res: Response, 
 
         const { firstName, lastName, email, password } = newUser.user;
 
-        const isEmailDuplicate = await userModel.findOne({ email });
+        const isEmailDuplicate = await getUserByEmail(email);
         if (isEmailDuplicate) {
             return next(new GlobalErrorHandler("Email already exists", 400));
         }
@@ -120,18 +122,18 @@ export const login = CatchAsyncError(async (req: Request, res: Response, next: N
     try {
         const { email, password } = req.body as LoginRequest;
 
-        if(!email || !password) {
+        if (!email || !password) {
             return next(new GlobalErrorHandler('Please enter email and password', 400));
         }
 
-        const user = await userModel.findOne({email}).select("+password");
+        const user = await getUserByEmailWithPass(email);
 
-        if(!user) {
+        if (!user) {
             return next(new GlobalErrorHandler('Invalid email or password', 400));
         }
 
         const isPasswordValid = await user.comparePassword(password);
-        if(!isPasswordValid) {
+        if (!isPasswordValid) {
             return next(new GlobalErrorHandler('Invalid email or password', 400));
         }
 
@@ -149,11 +151,87 @@ export const logout = CatchAsyncError(async (req: Request, res: Response, next: 
 
         const userId = req.user?._id || '';
         redis.del(userId);
-        
+
         res.status(200).json({
             success: true,
             message: 'Logout successfull'
         })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const updateAccessToken = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const refresh_token = req.cookies.refresh_token as string;
+        const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN as string) as JwtPayload;
+        const message = 'Something went wrong! Refresh token invalid';
+        if (!decoded) {
+            return next(new GlobalErrorHandler(message, 400));
+        }
+        const session = await redis.get(decoded.id as string);
+        if (!session) {
+            return next(new GlobalErrorHandler(message, 400));
+        }
+
+        const user = JSON.parse(session);
+
+        const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN as string, {
+            expiresIn: "5m"
+        });
+
+        const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN as string, {
+            expiresIn: "3d"
+        });
+
+        const { accessTokenOptions, refreshTokenOptions } = tokenOptions();
+
+        res.cookie("access_token", accessToken, accessTokenOptions);
+        res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
+        res.status(200).json({
+            success: true,
+            accessToken
+        })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const getUserInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?._id;
+        if (!userId) {
+            return next(new GlobalErrorHandler("Invalid login", 400));
+        }
+
+        const user = await getUserById(userId);
+
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const externalAuth = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { firstName, lastName, email, avatar } = req.body as ExternalAuth;
+
+        const user = await getUserByEmail(email);
+        if (!user) {
+            const newUser = await userModel.create({
+                firstName,
+                lastName,
+                email,
+                avatar
+            });
+            sendToken(newUser, 200, res);
+        } else {
+            sendToken(user, 200, res);
+        }
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 400));
     }

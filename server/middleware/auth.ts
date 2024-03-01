@@ -28,3 +28,13 @@ export const isAuthenticated = CatchAsyncError(async (req: Request, _res: Respon
 
     next();
 });
+
+// validate user role
+export const authorizeRoles = (...roles: string[]) => {
+    return (req: Request, _res: Response, next: NextFunction) => {
+        if (!roles.includes(req.user?.role || '')) {
+            return next(new GlobalErrorHandler(`Unauthorized User: ${req.user?._id}`, 403));
+        }
+        next();
+    }
+}
