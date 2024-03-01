@@ -12,3 +12,11 @@ export const updateCourse = (courseId: string, data: any) => CourseModel.findByI
         new: true
     }
 );
+
+export const getCourseDetails = (courseId: string) => CourseModel.findById(courseId).select(
+    "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+);
+
+export const getAllCourses = () => CourseModel.find().select(
+    "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+);
