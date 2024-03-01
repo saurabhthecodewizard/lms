@@ -2,7 +2,7 @@ require('dotenv').config();
 import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import GlobalErrorHandler from "../utils/ErrorHandler";
-import userModel, { User } from "../models/user.model";
+import UserModel, { User } from "../models/user.model";
 import RegistrationBody from "../interfaces/registrationBody.interface";
 import UserAuthenticationSecret from "../interfaces/userAuthenticationSecret.interface";
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
@@ -105,7 +105,7 @@ export const activateUser = CatchAsyncError(async (req: Request, res: Response, 
             return next(new GlobalErrorHandler("Email already exists", 400));
         }
 
-        const user = await userModel.create({
+        const user = await UserModel.create({
             firstName,
             lastName,
             email,
@@ -228,7 +228,7 @@ export const externalAuth = CatchAsyncError(async (req: Request, res: Response, 
 
         const user = await getUserByEmail(email);
         if (!user) {
-            const newUser = await userModel.create({
+            const newUser = await UserModel.create({
                 firstName,
                 lastName,
                 email,

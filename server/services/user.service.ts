@@ -1,11 +1,11 @@
-import userModel, { User } from "../models/user.model"
+import UserModel, { User } from "../models/user.model"
 
-export const getUserByEmail = (email: string) => userModel.findOne({ email });
+export const getUserByEmail = (email: string) => UserModel.findOne({ email });
 
-export const getUserByEmailWithPass = (email: string) => userModel.findOne({ email }).select("+password");
+export const getUserByEmailWithPass = (email: string) => UserModel.findOne({ email }).select("+password");
 
-export const getUserById = async (id: string) => await userModel.findById(id);
+export const getUserById = async (id: string) => await UserModel.findById(id);
 
-export const getUserByIdWithPass = async (id: string) => await userModel.findById(id).select("+password");
+export const getUserByIdWithPass = async (id: string) => await UserModel.findById(id).select("+password");
 
 export const saveUser = (user: User | null) => user?.save();
