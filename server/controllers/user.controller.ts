@@ -13,7 +13,7 @@ import UserRegisterAuthRequest from "../interfaces/userRegisterAuthRequest.inter
 import { sendToken, tokenOptions } from "../utils/jwt";
 import LoginRequest from "../interfaces/loginRequest.interface";
 import { redis } from "../utils/redis";
-import { getUserByEmail, getUserByEmailWithPass, getUserById } from "../services/user.service";
+import { getUserByEmail, getUserByEmailWithPass, getUserById, saveUser } from "../services/user.service";
 import ExternalAuth from "../interfaces/externalAuth.interface";
 
 export const createUserAuthenticationSecret = (user: RegistrationBody): UserAuthenticationSecret => {
@@ -184,6 +184,8 @@ export const updateAccessToken = CatchAsyncError(async (req: Request, res: Respo
             expiresIn: "3d"
         });
 
+        req.user = user;
+
         const { accessTokenOptions, refreshTokenOptions } = tokenOptions();
 
         res.cookie("access_token", accessToken, accessTokenOptions);
@@ -205,7 +207,8 @@ export const getUserInfo = CatchAsyncError(async (req: Request, res: Response, n
             return next(new GlobalErrorHandler("Invalid login", 400));
         }
 
-        const user = await getUserById(userId);
+        const userString = await redis.get(userId);
+        const user = JSON.parse(userString || '');
 
         res.status(200).json({
             success: true,
@@ -232,6 +235,41 @@ export const externalAuth = CatchAsyncError(async (req: Request, res: Response, 
         } else {
             sendToken(user, 200, res);
         }
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const updateUserInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, firstName, lastName } = req.body as UpdateUserInfo;
+        const userId = req.user?._id;
+        const user = await getUserById(userId);
+
+        if (email && user) {
+            const isEmailExist = await getUserByEmail(email);
+            if (isEmailExist) {
+                return next(new GlobalErrorHandler("Email already exists!", 400));
+            }
+            user.email = email;
+        }
+
+        if (firstName && user) {
+            user.firstName = firstName;
+        }
+
+        if (lastName && user) {
+            user.lastName = lastName;
+        }
+
+        await saveUser(user);
+
+        await redis.set(userId, JSON.stringify(user));
+
+        res.status(200).json({
+            success: true,
+            user
+        })
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 400));
     }

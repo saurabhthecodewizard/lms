@@ -11,8 +11,8 @@ export const tokenOptions = () => {
 
     // cookies
     const accessTokenOptions: TokenOptions = {
-        expires: new Date(Date.now() + accessTokenExpiresIn * 60 * 1000),
-        maxAge: accessTokenExpiresIn * 60 * 1000,
+        expires: new Date(Date.now() + accessTokenExpiresIn * 60 * 60 * 1000),
+        maxAge: accessTokenExpiresIn * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: 'lax'
     };
