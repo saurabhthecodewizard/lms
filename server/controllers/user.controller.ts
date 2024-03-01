@@ -12,6 +12,7 @@ import sendMail from "../utils/sendMail";
 import UserRegisterAuthRequest from "../interfaces/userRegisterAuthRequest.interface";
 import { sendToken } from "../utils/jwt";
 import LoginRequest from "../interfaces/loginRequest.interface";
+import { redis } from "../utils/redis";
 
 export const createUserAuthenticationSecret = (user: RegistrationBody): UserAuthenticationSecret => {
     const activationCode: string = Math.floor(1000 + Math.random() * 9000).toString();
@@ -145,6 +146,10 @@ export const logout = CatchAsyncError(async (req: Request, res: Response, next: 
     try {
         res.cookie("access_token", "", { maxAge: 1 });
         res.cookie("refresh_token", "", { maxAge: 1 });
+
+        const userId = req.user?._id || '';
+        redis.del(userId);
+        
         res.status(200).json({
             success: true,
             message: 'Logout successfull'
