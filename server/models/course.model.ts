@@ -28,7 +28,7 @@ interface CourseData extends Document {
     videoPlayer: string;
     links: Link[];
     suggestions: string;
-    questions: Comment[];
+    comments: Comment[];
 }
 
 export interface Course extends Document {
@@ -82,7 +82,7 @@ const courseDataSchema = new Schema<CourseData>({
     videoPlayer: String,
     links: [linkSchema],
     suggestions: String,
-    questions: [commentSchema]
+    comments: [commentSchema]
 });
 
 const courseSchema = new Schema<Course>({
@@ -135,6 +135,6 @@ const courseSchema = new Schema<Course>({
     }
 });
 
-const CourseModel: Model<Course> = mongoose.model("COurse", courseSchema);
+const CourseModel: Model<Course> = mongoose.model("Course", courseSchema);
 
 export default CourseModel

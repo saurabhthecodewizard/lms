@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import GlobalErrorHandler from "../utils/ErrorHandler";
 import cloudinary from 'cloudinary';
-import { createCourse, getAllCourses, getCourseById, getCourseDetails, updateCourse } from "../services/course.service";
+import { createCourse, getAllCourses, getCourseById, getCourseDetails, saveCourse, updateCourse } from "../services/course.service";
 import { redis } from "../utils/redis";
+import AddComment from "../interfaces/addComment.interface";
+import mongoose from "mongoose";
 
 
 export const uploadCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -128,6 +130,46 @@ export const getEnrolledCourse = CatchAsyncError(async (req: Request, res: Respo
         res.status(200).json({
             success: true,
             content: courseContent
+        });
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const addComment = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { comment, contentId } = req.body as AddComment;
+        const courseId = req.params.id;
+
+        if(!mongoose.Types.ObjectId.isValid(contentId)) {
+            return next(new GlobalErrorHandler("Invalid content!", 404));
+        }
+
+        const course = await getCourseById(courseId);
+
+        if (!course) {
+            return next(new GlobalErrorHandler("Course not found!", 404));
+        }
+
+        const courseContent = course?.courseData.find((item: any) => item._id.equals(contentId));
+
+        if (!courseContent) {
+            return next(new GlobalErrorHandler("Invalid content!", 404));
+        }
+
+        const newComment: any = {
+            user: req.user,
+            comment,
+            replies: [],
+        }
+
+        courseContent.comments.push(newComment);
+
+        await saveCourse(course);
+
+        res.status(200).json({
+            success: true,
+            course
         });
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 400));

@@ -1,4 +1,4 @@
-import CourseModel from "../models/course.model";
+import CourseModel, { Course } from "../models/course.model";
 
 
 export const createCourse = (data: any) => CourseModel.create(data);
@@ -14,11 +14,13 @@ export const updateCourse = (courseId: string, data: any) => CourseModel.findByI
 );
 
 export const getCourseDetails = (courseId: string) => CourseModel.findById(courseId).select(
-    "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+    "-courseData.videoUrl -courseData.suggestions -courseData.comments -courseData.links"
 );
 
 export const getAllCourses = () => CourseModel.find().select(
-    "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+    "-courseData.videoUrl -courseData.suggestions -courseData.comments -courseData.links"
 );
 
 export const getCourseById = (courseId: string) => CourseModel.findById(courseId);
+
+export const saveCourse = (course: Course) => course.save();
