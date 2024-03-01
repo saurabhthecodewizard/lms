@@ -13,8 +13,11 @@ import UserRegisterAuthRequest from "../interfaces/userRegisterAuthRequest.inter
 import { sendToken, tokenOptions } from "../utils/jwt";
 import LoginRequest from "../interfaces/loginRequest.interface";
 import { redis } from "../utils/redis";
-import { getUserByEmail, getUserByEmailWithPass, getUserById, saveUser } from "../services/user.service";
+import { getUserByEmail, getUserByEmailWithPass, getUserById, getUserByIdWithPass, saveUser } from "../services/user.service";
 import ExternalAuth from "../interfaces/externalAuth.interface";
+import UpdatePassword from "../interfaces/updatePassword.interface";
+import UpdateAvatar from "../interfaces/updateAvatar.interface";
+import cloudinary from 'cloudinary';
 
 export const createUserAuthenticationSecret = (user: RegistrationBody): UserAuthenticationSecret => {
     const activationCode: string = Math.floor(1000 + Math.random() * 9000).toString();
@@ -260,6 +263,78 @@ export const updateUserInfo = CatchAsyncError(async (req: Request, res: Response
 
         if (lastName && user) {
             user.lastName = lastName;
+        }
+
+        await saveUser(user);
+
+        await redis.set(userId, JSON.stringify(user));
+
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const updatePassword = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { oldPassword, newPassword } = req.body as UpdatePassword;
+
+        if (!oldPassword || !newPassword) {
+            return next(new GlobalErrorHandler("Enter old and new password!", 400));
+        }
+
+        const userId = req.user?._id;
+        const user = await getUserByIdWithPass(userId);
+
+        if (!user?.password) {
+            return next(new GlobalErrorHandler("Invalid user!", 400));
+        }
+
+        const isPasswordMatch = await user?.comparePassword(oldPassword);
+        if (!isPasswordMatch) {
+            return next(new GlobalErrorHandler("Invalid password!", 400));
+        }
+
+        user.password = newPassword;
+
+        await saveUser(user);
+
+        await redis.set(userId, JSON.stringify(user));
+
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const updateAvatar = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { avatar } = req.body as UpdateAvatar;
+
+        const userId = req.user?._id;
+        const user = await getUserByIdWithPass(userId);
+
+        if (!user || !avatar) {
+            return next(new GlobalErrorHandler("Invalid user!", 400));
+        }
+
+        if (user?.avatar.public_id) {
+            await cloudinary.v2.uploader.destroy(user?.avatar.public_id);
+        }
+
+        const avatarCloud = await cloudinary.v2.uploader.upload(avatar, {
+            folder: "avatars"
+        });
+
+        user.avatar = {
+            public_id: avatarCloud.public_id,
+            url: avatarCloud.secure_url
         }
 
         await saveUser(user);

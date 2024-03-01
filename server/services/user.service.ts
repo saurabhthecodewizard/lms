@@ -6,4 +6,6 @@ export const getUserByEmailWithPass = (email: string) => userModel.findOne({ ema
 
 export const getUserById = async (id: string) => await userModel.findById(id);
 
+export const getUserByIdWithPass = async (id: string) => await userModel.findById(id).select("+password");
+
 export const saveUser = (user: User | null) => user?.save();
