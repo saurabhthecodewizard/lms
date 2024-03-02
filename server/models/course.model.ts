@@ -1,13 +1,14 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
+import { User } from "./user.model";
 
 interface Comment extends Document {
-    user: object;
+    user: User;
     comment: string;
     replies?: Comment[];
 }
 
 interface Review extends Document {
-    user: object;
+    user: User;
     rating: number;
     comment: string;
     replies: Comment[];

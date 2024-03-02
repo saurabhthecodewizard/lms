@@ -2,10 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import GlobalErrorHandler from "../utils/ErrorHandler";
 import cloudinary from 'cloudinary';
+import ejs from 'ejs';
 import { createCourse, getAllCourses, getCourseById, getCourseDetails, saveCourse, updateCourse } from "../services/course.service";
 import { redis } from "../utils/redis";
 import AddComment from "../interfaces/addComment.interface";
 import mongoose from "mongoose";
+import AddReply from "../interfaces/addReply.interface";
+import path from "path";
+import sendMail from "../utils/sendMail";
 
 
 export const uploadCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -166,6 +170,76 @@ export const addComment = CatchAsyncError(async (req: Request, res: Response, ne
         courseContent.comments.push(newComment);
 
         await saveCourse(course);
+
+        res.status(200).json({
+            success: true,
+            course
+        });
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const addReply = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { reply, contentId, commentId } = req.body as AddReply;
+        const courseId = req.params.id;
+
+        if(!mongoose.Types.ObjectId.isValid(contentId)) {
+            return next(new GlobalErrorHandler("Invalid content!", 404));
+        }
+
+        const course = await getCourseById(courseId);
+
+        if (!course) {
+            return next(new GlobalErrorHandler("Course not found!", 404));
+        }
+
+        const courseContent = course?.courseData.find((item: any) => item._id.equals(contentId));
+
+        if (!courseContent) {
+            return next(new GlobalErrorHandler("Invalid content!", 404));
+        }
+
+        const comment = courseContent.comments.find((item: any) => item._id.equals(commentId));
+
+        if (!comment) {
+            return next(new GlobalErrorHandler("Comment not found!", 404));
+        }
+
+        const newReply: any = {
+            user: req.user,
+            reply
+        };
+
+        comment.replies?.push(newReply);
+
+        await saveCourse(course);
+
+        if (req.user?._id === comment.user._id) {
+            // create notification
+        } else {
+            const data = {
+                firstName: comment.user.firstName,
+                title: courseContent.title
+            }
+
+            const html = await ejs.renderFile(
+                path.join(__dirname, "../mails/notification-mail.ejs"),
+                data
+            );
+
+            try {
+                await sendMail({
+                    email: comment.user.email,
+                    subject: "Notification from Acadia",
+                    template: "notification-mail.ejs",
+                    data
+                });
+            } catch (error: any) {
+                return next(new GlobalErrorHandler(error.message, 400));
+            }
+        }
 
         res.status(200).json({
             success: true,
