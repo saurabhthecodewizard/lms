@@ -93,6 +93,6 @@ export const createOrder = CatchAsyncError(async (req: Request, res: Response, n
         })
 
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });

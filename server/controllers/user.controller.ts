@@ -81,7 +81,7 @@ export const register = CatchAsyncError(async (req: Request, res: Response, next
         }
 
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -117,7 +117,7 @@ export const activateUser = CatchAsyncError(async (req: Request, res: Response, 
         })
 
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -143,7 +143,7 @@ export const login = CatchAsyncError(async (req: Request, res: Response, next: N
         sendToken(user, 200, res);
 
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -160,7 +160,7 @@ export const logout = CatchAsyncError(async (req: Request, res: Response, next: 
             message: 'Logout successfull'
         })
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -199,7 +199,7 @@ export const updateAccessToken = CatchAsyncError(async (req: Request, res: Respo
             accessToken
         })
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -218,7 +218,7 @@ export const getUserInfo = CatchAsyncError(async (req: Request, res: Response, n
             user
         })
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -239,7 +239,7 @@ export const externalAuth = CatchAsyncError(async (req: Request, res: Response, 
             sendToken(user, 200, res);
         }
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -274,7 +274,7 @@ export const updateUserInfo = CatchAsyncError(async (req: Request, res: Response
             user
         })
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -309,7 +309,7 @@ export const updatePassword = CatchAsyncError(async (req: Request, res: Response
             user
         })
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -346,6 +346,6 @@ export const updateAvatar = CatchAsyncError(async (req: Request, res: Response, 
             user
         })
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });

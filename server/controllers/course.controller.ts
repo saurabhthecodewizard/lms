@@ -36,7 +36,7 @@ export const uploadCourse = CatchAsyncError(async (req: Request, res: Response, 
             course
         });
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -66,7 +66,7 @@ export const updateExistingCourse = CatchAsyncError(async (req: Request, res: Re
             course
         });
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -92,7 +92,7 @@ export const getCourseInfo = CatchAsyncError(async (req: Request, res: Response,
             });
         }
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -116,7 +116,7 @@ export const getAllAvailableCourses = CatchAsyncError(async (_req: Request, res:
             });
         }
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -138,7 +138,7 @@ export const getEnrolledCourse = CatchAsyncError(async (req: Request, res: Respo
             content: courseContent
         });
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -178,7 +178,7 @@ export const addComment = CatchAsyncError(async (req: Request, res: Response, ne
             course
         });
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -248,7 +248,7 @@ export const addReply = CatchAsyncError(async (req: Request, res: Response, next
             course
         });
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -294,7 +294,7 @@ export const addReview = CatchAsyncError(async (req: Request, res: Response, nex
             course
         });
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
 
@@ -341,6 +341,6 @@ export const addReviewReply = CatchAsyncError(async (req: Request, res: Response
             course
         });
     } catch (err: any) {
-        return next(new GlobalErrorHandler(err.message, 400));
+        return next(new GlobalErrorHandler(err.message, 500));
     }
 });
