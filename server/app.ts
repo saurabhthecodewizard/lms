@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import GlobalErrorMiddleware from './middleware/error';
 import userRouter from './routes/user.route';
 import courseRouter from './routes/course.route';
+import orderRouter from './routes/order.route';
 
 // body parser
 app.use(express.json({limit: "50mb"}));
@@ -19,8 +20,12 @@ app.use(cors({
 }));
 
 // routes
-app.use('/api/v1', userRouter);
-app.use('/api/v1', courseRouter);
+app.use(
+    '/api/v1', 
+    userRouter,
+    courseRouter,
+    orderRouter
+);
 
 //testing api
 app.get('/test', (_req: Request, res: Response, _next: NextFunction) => {
