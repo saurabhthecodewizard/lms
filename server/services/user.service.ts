@@ -11,3 +11,5 @@ export const getUserByIdWithPass = async (id: string) => await UserModel.findByI
 export const saveUser = (user: User | null) => user?.save();
 
 export const getAllUsers = () => UserModel.find().sort({ createdAt: -1 });
+
+export const modifyUserRole = (userId: string, role: string) => UserModel.findByIdAndUpdate(userId, { role }, { new: true });

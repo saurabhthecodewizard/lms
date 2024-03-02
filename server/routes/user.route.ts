@@ -1,5 +1,5 @@
 import express from 'express';
-import { activateUser, externalAuth, fetchAllUsers, getUserInfo, login, logout, register, updateAccessToken, updateAvatar, updatePassword, updateUserInfo } from '../controllers/user.controller';
+import { activateUser, externalAuth, fetchAllUsers, getUserInfo, login, logout, register, updateAccessToken, updateAvatar, updatePassword, updateUserInfo, updateUserRole } from '../controllers/user.controller';
 import { authorizeRoles, isAuthenticated } from '../middleware/auth';
 
 const userRouter = express.Router();
@@ -25,5 +25,7 @@ userRouter.put('/password', isAuthenticated, updatePassword);
 userRouter.put('/avatar', isAuthenticated, updateAvatar);
 
 userRouter.get('/users/all', isAuthenticated, authorizeRoles('admin'), fetchAllUsers);
+
+userRouter.put('/users/:id/role', isAuthenticated, authorizeRoles('admin'), updateUserRole);
 
 export default userRouter;
