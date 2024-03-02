@@ -174,7 +174,7 @@ export const updateAccessToken = CatchAsyncError(async (req: Request, res: Respo
         }
         const session = await redis.get(decoded.id as string);
         if (!session) {
-            return next(new GlobalErrorHandler(message, 400));
+            return next(new GlobalErrorHandler('Please login to access this resource!', 400));
         }
 
         const user = JSON.parse(session);
@@ -193,6 +193,9 @@ export const updateAccessToken = CatchAsyncError(async (req: Request, res: Respo
 
         res.cookie("access_token", accessToken, accessTokenOptions);
         res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
+        // Update the token expiry on redis to 7 days
+        await redis.set(user._id, JSON.stringify(user), "EX", 604800);
 
         res.status(200).json({
             success: true,

@@ -85,7 +85,8 @@ export const getCourseInfo = CatchAsyncError(async (req: Request, res: Response,
         } else {
             const course = await getCourseDetails(courseId);
 
-            redis.set(courseId, JSON.stringify(course));
+            // Courses will expire from redis in 7 days
+            redis.set(courseId, JSON.stringify(course), "EX", 604800);
 
             res.status(200).json({
                 success: true,
