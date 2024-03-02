@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import GlobalErrorHandler from "../utils/ErrorHandler";
-import { getAllNotifications, getNotificationById, saveNotification } from "../services/norification.service";
+import { deleteReadNotificationOlderThanThirtyDays, getAllNotifications, getNotificationById, saveNotification } from "../services/norification.service";
+import cron from 'node-cron';
 
 
 export const getNotifications = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -41,3 +42,7 @@ export const updateNotification = CatchAsyncError(async (req: Request, res: Resp
         return next(new GlobalErrorHandler(err.message, 500));
     }
 });
+
+cron.schedule("0 0 0 * * *", async () => {
+    await deleteReadNotificationOlderThanThirtyDays();
+})
