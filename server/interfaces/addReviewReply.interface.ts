@@ -1,0 +1,3 @@
+interface AddReviewReply {
+    comment: string;
+}

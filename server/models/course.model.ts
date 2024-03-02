@@ -7,7 +7,7 @@ interface Comment extends Document {
     replies?: Comment[];
 }
 
-interface Review extends Document {
+export interface Review extends Document {
     user: User;
     rating: number;
     comment: string;
@@ -59,7 +59,8 @@ const reviewSchema = new Schema<Review>({
         type: Number,
         default: 0
     },
-    comment: String
+    comment: String,
+    replies: [Object]
 });
 
 const linkSchema = new Schema<Link>({

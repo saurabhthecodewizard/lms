@@ -10,6 +10,8 @@ import mongoose from "mongoose";
 import AddReply from "../interfaces/addReply.interface";
 import path from "path";
 import sendMail from "../utils/sendMail";
+import AddReview from "../interfaces/addReview.interface";
+import { Review } from "../models/course.model";
 
 
 export const uploadCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -240,6 +242,99 @@ export const addReply = CatchAsyncError(async (req: Request, res: Response, next
                 return next(new GlobalErrorHandler(error.message, 400));
             }
         }
+
+        res.status(200).json({
+            success: true,
+            course
+        });
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const addReview = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { comment, rating } = req.body as AddReview;
+        const allEnrolledCourses = req.user?.courses;
+        const requestedCourseId = req.params.id;
+
+        const isCourseExists = allEnrolledCourses?.some((course: any) => course._id.toString() === requestedCourseId);
+        if (!isCourseExists) {
+            return next(new GlobalErrorHandler("Course not found!", 404));
+        }
+
+        const course = await getCourseById(requestedCourseId);
+        
+        if (!course) {
+            return next(new GlobalErrorHandler("Course not found!", 404));
+        }
+        const review: any = {
+            user: req.user,
+            comment,
+            rating
+        }
+
+        course.reviews.push(review);
+
+        let avg = 0;
+        course?.reviews.forEach((review: Review) => avg += review.rating);
+        course.rating = avg / course.reviews.length;
+
+        await saveCourse(course);
+
+        const notification = {
+            title: "New Review!",
+            message: `${req.user?.firstName} has posted a review on your course - ${course.name}`
+        };
+
+        //create notification
+
+        res.status(200).json({
+            success: true,
+            course
+        });
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 400));
+    }
+});
+
+export const addReviewReply = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { comment } = req.body as AddReviewReply;
+        const requestedCourseId = req.params.id;
+        const requestedReviewId = req.params.reviewId;
+
+        const course = await getCourseById(requestedCourseId);
+        
+        if (!course) {
+            return next(new GlobalErrorHandler("Course not found!", 404));
+        }
+
+        const review = course.reviews.find((review: Review) => review._id.equals(requestedReviewId));
+        
+        if (!review) {
+            return next(new GlobalErrorHandler("Something went wrong!", 404));
+        }
+
+        const reviewReply: any = {
+            user: req.user,
+            comment
+        }
+
+        if (!review.replies) {
+            review.replies = []
+        }
+
+        review.replies.push(reviewReply);
+
+        await saveCourse(course);
+
+        const notification = {
+            title: "New Review!",
+            message: `${req.user?.firstName} has posted a review on your course - ${course.name}`
+        };
+
+        //create notification
 
         res.status(200).json({
             success: true,
