@@ -13,7 +13,7 @@ import UserRegisterAuthRequest from "../interfaces/userRegisterAuthRequest.inter
 import { sendToken, tokenOptions } from "../utils/jwt";
 import LoginRequest from "../interfaces/loginRequest.interface";
 import { redis } from "../utils/redis";
-import { getAllUsers, getUserByEmail, getUserByEmailWithPass, getUserById, getUserByIdWithPass, modifyUserRole, saveUser } from "../services/user.service";
+import { deleteUserById, getAllUsers, getUserByEmail, getUserByEmailWithPass, getUserById, getUserByIdWithPass, modifyUserRole, saveUser } from "../services/user.service";
 import ExternalAuth from "../interfaces/externalAuth.interface";
 import UpdatePassword from "../interfaces/updatePassword.interface";
 import UpdateAvatar from "../interfaces/updateAvatar.interface";
@@ -373,6 +373,29 @@ export const updateUserRole = CatchAsyncError(async (req: Request, res: Response
         res.status(200).json({
             success: true,
             user
+        })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 500));
+    }
+});
+
+export const deleteUser = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await getUserById(userId);
+
+        if(!user) {
+            return next(new GlobalErrorHandler("User not found!", 400))
+        }
+
+        await deleteUserById(user);
+
+        await redis.del(userId);
+
+        res.status(200).json({
+            success: true,
+            message: "User deleted successfully!"
         })
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 500));
