@@ -2,14 +2,13 @@ require('dotenv').config();
 import { NextFunction, Request, Response } from "express";
 import CatchAsyncError from "../middleware/catchAsyncError";
 import GlobalErrorHandler from "../utils/ErrorHandler";
-import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import ejs from 'ejs';
 import path from "path";
 import sendMail from "../utils/sendMail";
 import { Order } from "../models/order.model";
 import UserModel from "../models/user.model";
 import { getCourseById, saveCourse } from "../services/course.service";
-import { createNewOrder } from "../services/order.service";
+import { createNewOrder, getAllOrders } from "../services/order.service";
 import { saveUser } from "../services/user.service";
 import { createNotification } from "../services/norification.service";
 
@@ -92,6 +91,19 @@ export const createOrder = CatchAsyncError(async (req: Request, res: Response, n
             order: course
         })
 
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 500));
+    }
+});
+
+export const fetchAllOrders = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const orders = await getAllOrders();
+
+        res.status(200).json({
+            success: true,
+            orders
+        })
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 500));
     }

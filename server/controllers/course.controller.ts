@@ -3,7 +3,7 @@ import CatchAsyncError from "../middleware/catchAsyncError";
 import GlobalErrorHandler from "../utils/ErrorHandler";
 import cloudinary from 'cloudinary';
 import ejs from 'ejs';
-import { createCourse, getAllCourses, getCourseById, getCourseDetails, saveCourse, updateCourse } from "../services/course.service";
+import { createCourse, getAllCourses, getAllCoursesData, getCourseById, getCourseDetails, saveCourse, updateCourse } from "../services/course.service";
 import { redis } from "../utils/redis";
 import AddComment from "../interfaces/addComment.interface";
 import mongoose from "mongoose";
@@ -349,6 +349,19 @@ export const addReviewReply = CatchAsyncError(async (req: Request, res: Response
             success: true,
             course
         });
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 500));
+    }
+});
+
+export const fetchAllCourses = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const courses = await getAllCoursesData();
+
+        res.status(200).json({
+            success: true,
+            courses
+        })
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 500));
     }

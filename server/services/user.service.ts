@@ -9,3 +9,5 @@ export const getUserById = async (id: string) => await UserModel.findById(id);
 export const getUserByIdWithPass = async (id: string) => await UserModel.findById(id).select("+password");
 
 export const saveUser = (user: User | null) => user?.save();
+
+export const getAllUsers = () => UserModel.find().sort({ createdAt: -1 });

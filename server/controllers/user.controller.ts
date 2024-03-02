@@ -13,7 +13,7 @@ import UserRegisterAuthRequest from "../interfaces/userRegisterAuthRequest.inter
 import { sendToken, tokenOptions } from "../utils/jwt";
 import LoginRequest from "../interfaces/loginRequest.interface";
 import { redis } from "../utils/redis";
-import { getUserByEmail, getUserByEmailWithPass, getUserById, getUserByIdWithPass, saveUser } from "../services/user.service";
+import { getAllUsers, getUserByEmail, getUserByEmailWithPass, getUserById, getUserByIdWithPass, saveUser } from "../services/user.service";
 import ExternalAuth from "../interfaces/externalAuth.interface";
 import UpdatePassword from "../interfaces/updatePassword.interface";
 import UpdateAvatar from "../interfaces/updateAvatar.interface";
@@ -344,6 +344,19 @@ export const updateAvatar = CatchAsyncError(async (req: Request, res: Response, 
         res.status(200).json({
             success: true,
             user
+        })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 500));
+    }
+});
+
+export const fetchAllUsers = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const users = await getAllUsers();
+
+        res.status(200).json({
+            success: true,
+            users
         })
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 500));

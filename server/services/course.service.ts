@@ -24,3 +24,5 @@ export const getAllCourses = () => CourseModel.find().select(
 export const getCourseById = (courseId: string) => CourseModel.findById(courseId);
 
 export const saveCourse = (course: Course) => course.save();
+
+export const getAllCoursesData = () => CourseModel.find().sort({  createdAt: -1 })
