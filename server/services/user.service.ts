@@ -1,4 +1,5 @@
 import UserModel, { User } from "../models/user.model"
+import { generateLastYearData } from "../utils/analytics.generator";
 
 export const getUserByEmail = (email: string) => UserModel.findOne({ email });
 
@@ -15,3 +16,5 @@ export const getAllUsers = () => UserModel.find().sort({ createdAt: -1 });
 export const modifyUserRole = (userId: string, role: string) => UserModel.findByIdAndUpdate(userId, { role }, { new: true });
 
 export const deleteUserById = (user: User) => user.deleteOne({ id: user._id });
+
+export const getUserAnalytics = () => generateLastYearData(UserModel);
