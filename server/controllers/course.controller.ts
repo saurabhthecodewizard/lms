@@ -12,6 +12,7 @@ import path from "path";
 import sendMail from "../utils/sendMail";
 import AddReview from "../interfaces/addReview.interface";
 import { Review } from "../models/course.model";
+import { createNotification } from "../services/norification.service";
 
 
 export const uploadCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -147,7 +148,7 @@ export const addComment = CatchAsyncError(async (req: Request, res: Response, ne
         const { comment, contentId } = req.body as AddComment;
         const courseId = req.params.id;
 
-        if(!mongoose.Types.ObjectId.isValid(contentId)) {
+        if (!mongoose.Types.ObjectId.isValid(contentId)) {
             return next(new GlobalErrorHandler("Invalid content!", 404));
         }
 
@@ -171,6 +172,12 @@ export const addComment = CatchAsyncError(async (req: Request, res: Response, ne
 
         courseContent.comments.push(newComment);
 
+        await createNotification({
+            user: req.user?._id,
+            title: "New Comment",
+            message: `You have a new comment on ${course.name} in section ${courseContent.title}.`
+        });
+
         await saveCourse(course);
 
         res.status(200).json({
@@ -187,7 +194,7 @@ export const addReply = CatchAsyncError(async (req: Request, res: Response, next
         const { reply, contentId, commentId } = req.body as AddReply;
         const courseId = req.params.id;
 
-        if(!mongoose.Types.ObjectId.isValid(contentId)) {
+        if (!mongoose.Types.ObjectId.isValid(contentId)) {
             return next(new GlobalErrorHandler("Invalid content!", 404));
         }
 
@@ -219,7 +226,11 @@ export const addReply = CatchAsyncError(async (req: Request, res: Response, next
         await saveCourse(course);
 
         if (req.user?._id === comment.user._id) {
-            // create notification
+            await createNotification({
+                user: req.user?._id,
+                title: "New Reply",
+                message: `You have a reply on ${course.name} in section ${courseContent.title}.`
+            });
         } else {
             const data = {
                 firstName: comment.user.firstName,
@@ -264,7 +275,7 @@ export const addReview = CatchAsyncError(async (req: Request, res: Response, nex
         }
 
         const course = await getCourseById(requestedCourseId);
-        
+
         if (!course) {
             return next(new GlobalErrorHandler("Course not found!", 404));
         }
@@ -282,12 +293,11 @@ export const addReview = CatchAsyncError(async (req: Request, res: Response, nex
 
         await saveCourse(course);
 
-        const notification = {
-            title: "New Review!",
+        await createNotification({
+            user: req.user?._id,
+            title: "New Review",
             message: `${req.user?.firstName} has posted a review on your course - ${course.name}`
-        };
-
-        //create notification
+        });
 
         res.status(200).json({
             success: true,
@@ -305,13 +315,13 @@ export const addReviewReply = CatchAsyncError(async (req: Request, res: Response
         const requestedReviewId = req.params.reviewId;
 
         const course = await getCourseById(requestedCourseId);
-        
+
         if (!course) {
             return next(new GlobalErrorHandler("Course not found!", 404));
         }
 
         const review = course.reviews.find((review: Review) => review._id.equals(requestedReviewId));
-        
+
         if (!review) {
             return next(new GlobalErrorHandler("Something went wrong!", 404));
         }
@@ -329,12 +339,11 @@ export const addReviewReply = CatchAsyncError(async (req: Request, res: Response
 
         await saveCourse(course);
 
-        const notification = {
-            title: "New Review!",
-            message: `${req.user?.firstName} has posted a review on your course - ${course.name}`
-        };
-
-        //create notification
+        await createNotification({
+            user: req.user?._id,
+            title: "New Review Reply",
+            message: `${req.user?.firstName} has posted a reply to your review on the course - ${course.name}`
+        });
 
         res.status(200).json({
             success: true,
