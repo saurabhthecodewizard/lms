@@ -1,21 +1,53 @@
 'use client';
-import Image from 'next/image';
 import React from 'react';
 import AcadiaLogo from '../../common/AcadiaLogo';
 import { navbarItems } from '@/lib/constants';
 import NavbarItem from './NavbarItem';
-import NavbarItemType from './types/navbarItem.interface';
 import CommonButton from '../../common/CommonButton';
 import { SlMenu } from 'react-icons/sl';
 import { BiX } from 'react-icons/bi';
 import ThemeSwitch from '@/app/utils/ThemeSwitch';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
+import { SxProps, Theme } from '@mui/material';
+import CurrentForm from '../auth/enums/currentForm.enum';
+import FormModal from '../auth/FormModal';
+import SignIn from '../auth/SignIn';
+import SignUp from '../auth/SignUp';
+import Verification from '../auth/Verification';
+
+const style: SxProps<Theme> = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 interface NavbarProps { }
 
 const Navbar: React.FC<NavbarProps> = (props) => {
     const [active, setActive] = React.useState('home');
     const [toggle, setToggle] = React.useState<boolean>(false);
+    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const [currentForm, setCurrentForm] = React.useState<CurrentForm>(CurrentForm.NONE);
     const menuRef = React.useRef<HTMLDivElement>(null);
+
+    const onChangeFormHandler = React.useCallback((selected: CurrentForm) => {
+        setCurrentForm(selected);
+    }, [])
+
+    const onModalCloseHandler = React.useCallback(() => setModalOpen(false), []);
+
+    const onModalOpenHandler = React.useCallback(() => {
+        setModalOpen(true);
+        onChangeFormHandler(CurrentForm.SIGN_IN);
+    }, [onChangeFormHandler]);
 
     const onClickOutsideHandler = React.useCallback(
         (event: MouseEvent) => {
@@ -68,8 +100,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 </div>
                 <div className='basis-1/3 flex items-center justify-end gap-4'>
                     <ThemeSwitch />
-                    <CommonButton theme='outline'>
-                        Login
+                    <CommonButton onClick={onModalOpenHandler} theme='outline'>
+                        Sign In
                     </CommonButton>
                     {
                         toggle ?
@@ -94,6 +126,30 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                             }
                         </ul>
                     </div>
+                    {
+                        modalOpen && (currentForm === CurrentForm.SIGN_IN
+                            ? <FormModal
+                                component={SignIn}
+                                modalOpen={modalOpen}
+                                onModalClose={onModalCloseHandler}
+                                onChangeForm={onChangeFormHandler}
+                            />
+                            : currentForm === CurrentForm.SIGN_UP
+                                ? <FormModal
+                                    component={SignUp}
+                                    modalOpen={modalOpen}
+                                    onModalClose={onModalCloseHandler}
+                                    onChangeForm={onChangeFormHandler}
+                                />
+                                : currentForm === CurrentForm.VERIFICATION
+                                    ? <FormModal
+                                        component={Verification}
+                                        modalOpen={modalOpen}
+                                        onModalClose={onModalCloseHandler}
+                                        onChangeForm={onChangeFormHandler}
+                                    />
+                                    : null)
+                    }
                 </div>
             </nav>
         </>

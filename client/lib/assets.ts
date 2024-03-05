@@ -1,3 +1,6 @@
 import logo from '@/public/acadia-logo.png';
+import logoSmall from '@/public/acadia-favicon.png'
 
-export { logo };
+import hero from '@/public/hero.png';
+
+export { logo, logoSmall, hero };

@@ -11,7 +11,7 @@ interface NavbarItemProps {
 const NavbarItem: React.FC<NavbarItemProps> = (props) => {
     const { title, link, activeLink, onChange } = props;
     return (
-        <Link href={`#${link}`}>
+        <Link href={`${link}`}>
             <button onClick={onChange} value={link} className={`${activeLink === link ? 'text-orange-500 font-bold' : ''} `}>
                 {title}
             </button>
