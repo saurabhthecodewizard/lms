@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 import CommonInput from '../../common/CommonInput';
 import CommonPasswordInput from '../../common/CommonPasswordInput';
 import CommonButton from '../../common/CommonButton';
+import { useRegisterMutation } from '@/redux/features/auth/authApi';
+import toast from 'react-hot-toast';
 
 const schema = Yup.object().shape({
     firstName: Yup.string().required('Please enter your first name'),
@@ -18,6 +20,7 @@ const schema = Yup.object().shape({
 
 const SignUp: React.FC<FormProp> = (props) => {
     const { onChangeForm } = props;
+    const [register, { data, error, isSuccess }] = useRegisterMutation();
     const { touched, errors, values, handleChange, handleSubmit } = useFormik({
         initialValues: {
             firstName: '',
@@ -27,13 +30,26 @@ const SignUp: React.FC<FormProp> = (props) => {
         },
         validationSchema: schema,
         onSubmit: async ({ firstName, lastName, email, password }) => {
-            onChangeForm(CurrentForm.VERIFICATION);
+            const data = { firstName, lastName, email, password };
+            await register(data);
         }
     });
 
     const onChangeFormHandler = React.useCallback(() => {
         onChangeForm(CurrentForm.SIGN_IN);
     }, [onChangeForm]);
+
+    React.useEffect(() => {
+        if (isSuccess) {
+            const message = data?.message || 'Registration Successful!'
+            toast.success(message);
+            onChangeForm(CurrentForm.VERIFICATION);
+        }
+        if (error && 'data' in error) {
+            toast.error((error.data as any).message);
+        }
+    }, [data?.message, error, isSuccess, onChangeForm]);
+
     return (
         <Box className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] sm:w-[500px] bg-slate-200 dark:bg-slate-800 border-1 border-black shadow-md p-4 rounded-xl'>
             <div className="flex min-h-full flex-col justify-center px-6 py-6 lg:px-8">
@@ -49,30 +65,30 @@ const SignUp: React.FC<FormProp> = (props) => {
                         className="space-y-6"
                         onSubmit={handleSubmit}
                     >
-                    <CommonInput
-                        id="firstName"
-                        type="text"
-                        label='First Name'
-                        value={values.firstName}
-                        onChange={handleChange}
-                        placeholder='John'
-                        required
-                        errors={errors.firstName}
-                        showError={touched.lastName}
-                    />
-                    
-                    <CommonInput
-                        id="lastName"
-                        type="text"
-                        label='Last Name'
-                        value={values.lastName}
-                        onChange={handleChange}
-                        placeholder='Doe'
-                        required
-                        errors={errors.lastName}
-                        showError={touched.lastName}
-                    />
-                        
+                        <CommonInput
+                            id="firstName"
+                            type="text"
+                            label='First Name'
+                            value={values.firstName}
+                            onChange={handleChange}
+                            placeholder='John'
+                            required
+                            errors={errors.firstName}
+                            showError={touched.lastName}
+                        />
+
+                        <CommonInput
+                            id="lastName"
+                            type="text"
+                            label='Last Name'
+                            value={values.lastName}
+                            onChange={handleChange}
+                            placeholder='Doe'
+                            required
+                            errors={errors.lastName}
+                            showError={touched.lastName}
+                        />
+
                         <CommonInput
                             id="email"
                             type="email"

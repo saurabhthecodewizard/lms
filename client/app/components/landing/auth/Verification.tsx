@@ -5,6 +5,9 @@ import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
 import { VscWorkspaceTrusted } from 'react-icons/vsc';
 import CommonButton from '../../common/CommonButton';
 import CurrentForm from './enums/currentForm.enum';
+import { useActivateMutation } from '@/redux/features/auth/authApi';
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 type VerifyCode = {
     "0": string;
@@ -15,6 +18,7 @@ type VerifyCode = {
 
 const Verification: React.FC<FormProp> = (props) => {
     const { onChangeForm } = props;
+    const { token } = useSelector((state: any) => state.auth);
     const [invalid, setInvalid] = React.useState<boolean>(false);
     const [verificationCode, setVerificationCode] = React.useState<VerifyCode>({
         "0": '',
@@ -28,11 +32,19 @@ const Verification: React.FC<FormProp> = (props) => {
         React.useRef<HTMLInputElement>(null),
         React.useRef<HTMLInputElement>(null)
     ])
+    const [activate, { isSuccess, error }] = useActivateMutation();
 
     const onSubmitVerifyHandler = React.useCallback(async () => {
-        setInvalid(true);
-        console.log('Handler');
-    }, []);
+        const code = Object.values(verificationCode).join('');
+        if (code.length !== 4) {
+            setInvalid(true);
+            return;
+        }
+        await activate({
+            code,
+            token
+        })
+    }, [activate, token, verificationCode]);
 
     const onChangeInput = React.useCallback((index: number, value: string) => {
         setInvalid(false);
@@ -59,6 +71,17 @@ const Verification: React.FC<FormProp> = (props) => {
     }, [onChangeInput]);
 
     const onChangeFormHandler = React.useCallback(() => onChangeForm(CurrentForm.SIGN_IN), [onChangeForm]);
+
+    React.useEffect(() => {
+        if (isSuccess) {
+            toast.success('Account Activated Successfully!');
+            onChangeForm(CurrentForm.SIGN_IN);
+        }
+        if (error && 'data' in error) {
+            toast.error((error.data as any).message);
+            setInvalid(true);
+        }
+    }, [error, isSuccess, onChangeForm]);
 
     return (
         <Box className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] sm:w-[500px] bg-slate-200 dark:bg-slate-800 border-1 border-black shadow-md p-4 rounded-xl'>
