@@ -2,7 +2,7 @@ require('dotenv').config();
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github';
-import { getUserById, getUserBySocialAuthId } from '../services/user.service';
+import { getUserByEmail, getUserById, getUserBySocialAuthId } from '../services/user.service';
 import UserModel from '../models/user.model';
 import cloudinary from 'cloudinary';
 
@@ -25,13 +25,16 @@ export const configureSocialAuthStrategy = () => {
         async (_accessToken, _refreshToken, profile, done) => {
             // Handle user data after successful Google authentication
             // Example: You can save user data to your database or perform any other action
-            const user = await getUserBySocialAuthId(profile.id);
+            const email = profile.emails?.[0].value;
+            let user = await getUserBySocialAuthId(profile.id);
+            if (!user) {
+                user = await getUserByEmail(email as string);
+            }
             // If user doesn't exist creates a new user. (similar to sign up)
             if (!user) {
                 const firstName = profile.name?.givenName;
                 const lastName = profile.name?.familyName;
                 const avatar = profile._json.picture;
-                const email = profile.emails?.[0].value;
 
                 let savedAvatar;
                 if (!!avatar) {
@@ -67,7 +70,11 @@ export const configureSocialAuthStrategy = () => {
     }, async (_accessToken, _refreshToken, profile, done) => {
         // You can handle the GitHub profile data here
         // Save user information to your database if needed
-        const user = await getUserBySocialAuthId(profile.id);
+        const email = profile.emails?.[0].value;
+        let user = await getUserBySocialAuthId(profile.id);
+        if (!user) {
+            user = await getUserByEmail(email as string);
+        }
         // If user doesn't exist creates a new user. (similar to sign up)
         if (!user) {
             const nameArray = profile.displayName.split(' ');
