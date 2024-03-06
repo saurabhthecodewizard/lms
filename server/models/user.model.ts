@@ -11,6 +11,7 @@ export interface User extends Document {
     lastName: string;
     email: string;
     password: string;
+    socialAuthId: string;
     avatar: {
         public_id: string;
         url: string
@@ -25,12 +26,10 @@ export interface User extends Document {
 
 const userSchema: Schema<User> = new mongoose.Schema({
     firstName: {
-        type: String,
-        required: [true, 'Please enter your first name']
+        type: String
     },
     lastName: {
-        type: String,
-        required: [true, 'Please enter your last name']
+        type: String
     },
     email: {
         type: String,
@@ -47,6 +46,9 @@ const userSchema: Schema<User> = new mongoose.Schema({
         type: String,
         minlength: [6, 'Password must be at least 6 characters'],
         select: false
+    },
+    socialAuthId: {
+        type: String
     },
     avatar: {
         public_id: String,

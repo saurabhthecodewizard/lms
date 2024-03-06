@@ -52,4 +52,24 @@ export const sendToken = (user: User, statusCode: number, res: Response) => {
         user,
         accessToken
     })
-}
+};
+
+export const attachTokenAndRedirect = (user: User, res: Response) => {
+    const accessToken = user.accessToken();
+    const refreshToken = user.refreshToken();
+
+    // save session to redis
+    redis.set(user._id, JSON.stringify(user) as any);
+
+    const { accessTokenOptions, refreshTokenOptions } = tokenOptions();
+
+    // make production secure
+    if (process.env.NODE_ENV === 'production') {
+        accessTokenOptions.secure = true;
+    }
+
+    res.cookie("access_token", accessToken, accessTokenOptions);
+    res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
+    res.redirect(process.env.ORIGIN || 'http://localhost:3000')
+};

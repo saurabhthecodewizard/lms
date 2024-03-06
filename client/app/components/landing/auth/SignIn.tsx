@@ -8,11 +8,13 @@ import CurrentForm from './enums/currentForm.enum';
 import Image from 'next/image';
 import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
 import CommonButton from '../../common/CommonButton';
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { AiFillGithub, AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import CommonInput from '../../common/CommonInput';
 import CommonPasswordInput from '../../common/CommonPasswordInput';
 import { useLoginMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
+import { FcGoogle } from 'react-icons/fc';
+import Link from 'next/link';
 
 const schema = Yup.object().shape({
     email: Yup.string().email('Invalid email!').required('Please enter your email'),
@@ -88,7 +90,21 @@ const SignIn: React.FC<FormProp> = (props) => {
                         </CommonButton>
                     </form>
 
-                    <p className="mt-10 text-center text-sm text-gray-500">
+                    <div className='flex flex-col items-center justify-center mt-4 gap-2'>
+                        <p className='text-center text-sm text-gray-500'>
+                            Or Sign In with
+                        </p>
+                        <div className='flex items-center justify-center gap-3 mt-2'>
+                            <Link href='http://localhost:8000/auth/google' className='flex items-center justify-center'>
+                                <FcGoogle size={30} className='cursor-pointer' />
+                            </Link>
+                            <Link href='http://localhost:8000/auth/github' className='flex items-center justify-center'>
+                                <AiFillGithub size={30} className='cursor-pointer' />
+                            </Link>
+                        </div>
+                    </div>
+
+                    <p className="mt-4 text-center text-sm text-gray-500">
                         Not a member?{' '}
                         <button onClick={onChangeFormHandler} className="font-semibold leading-6 text-orange-500 hover:text-orange-600">Sign up</button>
                     </p>
