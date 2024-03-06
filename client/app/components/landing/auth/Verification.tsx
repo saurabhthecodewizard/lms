@@ -7,7 +7,7 @@ import CommonButton from '../../common/CommonButton';
 import CurrentForm from './enums/currentForm.enum';
 import { useActivateMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/redux/hooks';
 
 type VerifyCode = {
     "0": string;
@@ -18,7 +18,7 @@ type VerifyCode = {
 
 const Verification: React.FC<FormProp> = (props) => {
     const { onChangeForm } = props;
-    const { token } = useSelector((state: any) => state.auth);
+    const { token } = useAppSelector((state) => state.auth);
     const [invalid, setInvalid] = React.useState<boolean>(false);
     const [verificationCode, setVerificationCode] = React.useState<VerifyCode>({
         "0": '',

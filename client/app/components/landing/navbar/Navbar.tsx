@@ -7,9 +7,6 @@ import CommonButton from '../../common/CommonButton';
 import { SlMenu } from 'react-icons/sl';
 import { BiX } from 'react-icons/bi';
 import ThemeSwitch from '@/app/utils/ThemeSwitch';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
 import { SxProps, Theme } from '@mui/material';
 import CurrentForm from '../auth/enums/currentForm.enum';
 import FormModal from '../auth/FormModal';
@@ -31,7 +28,7 @@ const style: SxProps<Theme> = {
 
 interface NavbarProps { }
 
-const Navbar: React.FC<NavbarProps> = (props) => {
+const Navbar: React.FC<NavbarProps> = (_props) => {
     const [active, setActive] = React.useState('home');
     const [toggle, setToggle] = React.useState<boolean>(false);
     const [modalOpen, setModalOpen] = React.useState<boolean>(false);
@@ -81,7 +78,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
     return (
         <>
-            <nav className="flex items-center justify-between px-4 sm:px-16 md:px-28 py-4 bg-white border-white dark:bg-gray-900 dark:border-gray-900">
+            <nav className="flex items-center justify-between px-4 sm:px-20 md:px-28 lg:px-40 xl:px-60 py-4 bg-white border-white dark:bg-gray-900 dark:border-gray-900">
                 <div className='basis-1/3 flex items-center justify-start'>
                     <AcadiaLogo />
                 </div>

@@ -11,6 +11,8 @@ import CommonButton from '../../common/CommonButton';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import CommonInput from '../../common/CommonInput';
 import CommonPasswordInput from '../../common/CommonPasswordInput';
+import { useLoginMutation } from '@/redux/features/auth/authApi';
+import toast from 'react-hot-toast';
 
 const schema = Yup.object().shape({
     email: Yup.string().email('Invalid email!').required('Please enter your email'),
@@ -19,6 +21,7 @@ const schema = Yup.object().shape({
 
 const SignIn: React.FC<FormProp> = (props) => {
     const { onChangeForm } = props;
+    const [login, { isSuccess, error, data }] = useLoginMutation();
     const { touched, errors, values, handleChange, handleSubmit } = useFormik({
         initialValues: {
             email: '',
@@ -26,14 +29,25 @@ const SignIn: React.FC<FormProp> = (props) => {
         },
         validationSchema: schema,
         onSubmit: async ({ email, password }) => {
-            console.log(email);
-            console.log(password);
+            await login({ email, password });
         }
     });
 
     const onChangeFormHandler = React.useCallback(() => {
         onChangeForm(CurrentForm.SIGN_UP);
     }, [onChangeForm]);
+
+    React.useEffect(() => {
+        if (isSuccess) {
+            const message = data?.message || 'Login Successful!'
+            toast.success(message);
+            onChangeForm(CurrentForm.NONE);
+        }
+        if (error && 'data' in error) {
+            toast.error((error.data as any).message);
+        }
+    }, [data?.message, error, isSuccess, onChangeForm]);
+
     return (
         <Box className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] sm:w-[500px] bg-slate-200 dark:bg-slate-800 border-1 border-black shadow-md p-4 rounded-xl'>
             <div className="flex min-h-full flex-col justify-center px-6 py-6 lg:px-8">

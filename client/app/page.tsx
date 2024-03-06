@@ -1,18 +1,13 @@
 "use client"
 import React from 'react';
-import Header from './utils/Header';
 import Navbar from './components/landing/navbar/Navbar';
+import { useAppSelector } from '@/redux/hooks';
 
-interface PageProps {
-
-}
-
-const Page: React.FC<PageProps> = (props) => {
+const Page: React.FC = () => {
   return(
-    <div className='w-full h-screen'>
-      <Header />
+    <main className='w-full h-screen'>
       <Navbar />
-    </div>
+    </main>
   )
 };
 
