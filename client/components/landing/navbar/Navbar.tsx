@@ -78,7 +78,7 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
 
     return (
         <>
-            <nav className="flex items-center justify-between px-4 sm:px-20 md:px-28 lg:px-40 xl:px-60 py-4 bg-white border-white dark:bg-gray-900 dark:border-gray-900">
+            <nav className="flex items-center justify-between px-4 sm:px-20 md:px-28 lg:px-40 xl:px-60 py-1 bg-white border-white dark:bg-gray-900 dark:border-gray-900">
                 <div className='basis-1/3 flex items-center justify-start'>
                     <AcadiaLogo />
                 </div>

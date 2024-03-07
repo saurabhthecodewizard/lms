@@ -2,7 +2,6 @@ import React from 'react'
 import FormProp from './types/formProp.interface'
 import { Box } from '@mui/material'
 import CurrentForm from './enums/currentForm.enum';
-import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import CommonInput from '../../common/CommonInput';
@@ -13,6 +12,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { AiFillGithub } from 'react-icons/ai';
+import AcadiaLogoSmall from '@/components/common/AcadiaLogoSmall';
 
 const schema = Yup.object().shape({
     firstName: Yup.string().required('Please enter your first name'),

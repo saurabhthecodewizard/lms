@@ -5,7 +5,6 @@ import * as Yup from 'yup';
 import FormProp from './types/formProp.interface'
 import { Box } from '@mui/material'
 import CurrentForm from './enums/currentForm.enum';
-import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
 import CommonButton from '../../common/CommonButton';
 import { AiFillGithub,  } from 'react-icons/ai';
 import CommonInput from '../../common/CommonInput';
@@ -14,6 +13,7 @@ import { useLoginMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
+import AcadiaLogoSmall from '@/components/common/AcadiaLogoSmall';
 
 const schema = Yup.object().shape({
     email: Yup.string().email('Invalid email!').required('Please enter your email'),

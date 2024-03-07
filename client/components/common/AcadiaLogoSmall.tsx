@@ -1,10 +1,23 @@
-import { logoSmall } from '@/lib/assets';
+import { logoSmallDark, logoSmallLight } from '@/lib/assets';
 import Image from 'next/image';
-import React from 'react';
+import React from 'react'
 
-const AcadiaLogoSmall = () => {
+interface AcadiaLogoSmallProps {
+    containerClassName?: string;
+    className?: string;
+}
+
+const AcadiaLogoSmall: React.FC<AcadiaLogoSmallProps> = (props) => {
+    const { containerClassName, className } = props;
     return (
-        <Image priority src={logoSmall} alt='ACADIA' width={100} height={100} className='py-2' />
+        <>
+            <div className={`hidden dark:flex ${containerClassName}`}>
+                <Image priority src={logoSmallDark} alt='ACADIA' width={0} height={0} className={`py-2 w-12 ${className}`} />
+            </div>
+            <div className={`flex dark:hidden ${containerClassName}`}>
+                <Image priority src={logoSmallLight} alt='ACADIA' width={0} height={0} className={`py-2 w-12 ${className}`} />
+            </div>
+        </>
     )
 }
 

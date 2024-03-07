@@ -1,13 +1,13 @@
 import React from 'react'
 import FormProp from './types/formProp.interface';
 import { Box } from '@mui/material';
-import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
 import { VscWorkspaceTrusted } from 'react-icons/vsc';
 import CommonButton from '../../common/CommonButton';
 import CurrentForm from './enums/currentForm.enum';
 import { useActivateMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
 import { useAppSelector } from '@/redux/hooks';
+import AcadiaLogoSmall from '@/components/common/AcadiaLogoSmall';
 
 type VerifyCode = {
     "0": string;
