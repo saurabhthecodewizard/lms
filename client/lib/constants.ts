@@ -1,4 +1,4 @@
-import NavbarItem from "@/app/components/landing/navbar/types/navbarItem.interface";
+import NavbarItem from "@/components/landing/navbar/types/navbarItem.interface";
 
 
 export const navbarItems: NavbarItem[] = [

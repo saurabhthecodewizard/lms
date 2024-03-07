@@ -6,7 +6,7 @@ import NavbarItem from './NavbarItem';
 import CommonButton from '../../common/CommonButton';
 import { SlMenu } from 'react-icons/sl';
 import { BiX } from 'react-icons/bi';
-import ThemeSwitch from '@/app/utils/ThemeSwitch';
+import ThemeSwitch from '@/utils/ThemeSwitch';
 import { SxProps, Theme } from '@mui/material';
 import CurrentForm from '../auth/enums/currentForm.enum';
 import FormModal from '../auth/FormModal';

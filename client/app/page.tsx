@@ -1,7 +1,6 @@
 "use client"
 import React from 'react';
-import Navbar from './components/landing/navbar/Navbar';
-import { useAppSelector } from '@/redux/hooks';
+import Navbar from '../components/landing/navbar/Navbar';
 
 const Page: React.FC = () => {
   return(

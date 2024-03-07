@@ -1,49 +1,52 @@
-'use client';
-import React from 'react';
+import React from 'react'
+import FormProp from './types/formProp.interface'
+import { Box } from '@mui/material'
+import CurrentForm from './enums/currentForm.enum';
+import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import FormProp from './types/formProp.interface'
-import { Box, Typography } from '@mui/material'
-import CurrentForm from './enums/currentForm.enum';
-import Image from 'next/image';
-import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
-import CommonButton from '../../common/CommonButton';
-import { AiFillGithub, AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import CommonInput from '../../common/CommonInput';
 import CommonPasswordInput from '../../common/CommonPasswordInput';
-import { useLoginMutation } from '@/redux/features/auth/authApi';
+import CommonButton from '../../common/CommonButton';
+import { useRegisterMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
-import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
+import { FcGoogle } from 'react-icons/fc';
+import { AiFillGithub } from 'react-icons/ai';
 
 const schema = Yup.object().shape({
+    firstName: Yup.string().required('Please enter your first name'),
+    lastName: Yup.string().required('Please enter your last name'),
     email: Yup.string().email('Invalid email!').required('Please enter your email'),
     password: Yup.string().required('Please enter your password'),
 })
 
-const SignIn: React.FC<FormProp> = (props) => {
+const SignUp: React.FC<FormProp> = (props) => {
     const { onChangeForm } = props;
-    const [login, { isSuccess, error, data }] = useLoginMutation();
+    const [register, { data, error, isSuccess }] = useRegisterMutation();
     const { touched, errors, values, handleChange, handleSubmit } = useFormik({
         initialValues: {
+            firstName: '',
+            lastName: '',
             email: '',
             password: ''
         },
         validationSchema: schema,
-        onSubmit: async ({ email, password }) => {
-            await login({ email, password });
+        onSubmit: async ({ firstName, lastName, email, password }) => {
+            const data = { firstName, lastName, email, password };
+            await register(data);
         }
     });
 
     const onChangeFormHandler = React.useCallback(() => {
-        onChangeForm(CurrentForm.SIGN_UP);
+        onChangeForm(CurrentForm.SIGN_IN);
     }, [onChangeForm]);
 
     React.useEffect(() => {
         if (isSuccess) {
-            const message = data?.message || 'Login Successful!'
+            const message = data?.message || 'Registration Successful!'
             toast.success(message);
-            onChangeForm(CurrentForm.NONE);
+            onChangeForm(CurrentForm.VERIFICATION);
         }
         if (error && 'data' in error) {
             toast.error((error.data as any).message);
@@ -56,7 +59,7 @@ const SignIn: React.FC<FormProp> = (props) => {
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col items-center">
                     <AcadiaLogoSmall />
                     <h2 className="text-center text-2xl font-bold leading-9 tracking-tight">
-                        Sign in to your account
+                        Sign up for Acadia
                     </h2>
                 </div>
 
@@ -65,6 +68,30 @@ const SignIn: React.FC<FormProp> = (props) => {
                         className="space-y-6"
                         onSubmit={handleSubmit}
                     >
+                        <CommonInput
+                            id="firstName"
+                            type="text"
+                            label='First Name'
+                            value={values.firstName}
+                            onChange={handleChange}
+                            placeholder='John'
+                            required
+                            errors={errors.firstName}
+                            showError={touched.lastName}
+                        />
+
+                        <CommonInput
+                            id="lastName"
+                            type="text"
+                            label='Last Name'
+                            value={values.lastName}
+                            onChange={handleChange}
+                            placeholder='Doe'
+                            required
+                            errors={errors.lastName}
+                            showError={touched.lastName}
+                        />
+
                         <CommonInput
                             id="email"
                             type="email"
@@ -86,7 +113,7 @@ const SignIn: React.FC<FormProp> = (props) => {
                         />
 
                         <CommonButton type='submit' className='w-full rounded-3xl' theme='solid'>
-                            Sign In
+                            Sign up
                         </CommonButton>
                     </form>
 
@@ -104,9 +131,9 @@ const SignIn: React.FC<FormProp> = (props) => {
                         </div>
                     </div>
 
-                    <p className="mt-4 text-center text-sm text-gray-500">
-                        Not a member?{' '}
-                        <button onClick={onChangeFormHandler} className="font-semibold leading-6 text-orange-500 hover:text-orange-600">Sign up</button>
+                    <p className="mt-10 text-center text-sm text-gray-500">
+                        Already have an account?{' '}
+                        <button onClick={onChangeFormHandler} className="font-semibold leading-6 text-orange-500 hover:text-orange-600">Sign in</button>
                     </p>
                 </div>
             </div>
@@ -114,4 +141,4 @@ const SignIn: React.FC<FormProp> = (props) => {
     )
 }
 
-export default SignIn
+export default SignUp

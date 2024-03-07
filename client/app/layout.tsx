@@ -1,6 +1,6 @@
 import { Josefin_Sans, Poppins } from 'next/font/google'
 import './globals.css'
-import { ThemeProvider } from './utils/theme-provider';
+import { ThemeProvider } from '../utils/theme-provider';
 import { Toaster } from 'react-hot-toast';
 import { StoreProvider } from '@/redux/StoreProvider';
 import { Metadata } from 'next';

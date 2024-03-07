@@ -1,49 +1,48 @@
-import React from 'react'
-import FormProp from './types/formProp.interface'
-import { Box, Typography } from '@mui/material'
-import CurrentForm from './enums/currentForm.enum';
-import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
+'use client';
+import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import FormProp from './types/formProp.interface'
+import { Box } from '@mui/material'
+import CurrentForm from './enums/currentForm.enum';
+import AcadiaLogoSmall from '../../common/AcadiaLogoSmall';
+import CommonButton from '../../common/CommonButton';
+import { AiFillGithub,  } from 'react-icons/ai';
 import CommonInput from '../../common/CommonInput';
 import CommonPasswordInput from '../../common/CommonPasswordInput';
-import CommonButton from '../../common/CommonButton';
-import { useRegisterMutation } from '@/redux/features/auth/authApi';
+import { useLoginMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
+import { FcGoogle } from 'react-icons/fc';
+import Link from 'next/link';
 
 const schema = Yup.object().shape({
-    firstName: Yup.string().required('Please enter your first name'),
-    lastName: Yup.string().required('Please enter your last name'),
     email: Yup.string().email('Invalid email!').required('Please enter your email'),
     password: Yup.string().required('Please enter your password'),
 })
 
-const SignUp: React.FC<FormProp> = (props) => {
+const SignIn: React.FC<FormProp> = (props) => {
     const { onChangeForm } = props;
-    const [register, { data, error, isSuccess }] = useRegisterMutation();
+    const [login, { isSuccess, error, data }] = useLoginMutation();
     const { touched, errors, values, handleChange, handleSubmit } = useFormik({
         initialValues: {
-            firstName: '',
-            lastName: '',
             email: '',
             password: ''
         },
         validationSchema: schema,
-        onSubmit: async ({ firstName, lastName, email, password }) => {
-            const data = { firstName, lastName, email, password };
-            await register(data);
+        onSubmit: async ({ email, password }) => {
+            await login({ email, password });
         }
     });
 
     const onChangeFormHandler = React.useCallback(() => {
-        onChangeForm(CurrentForm.SIGN_IN);
+        onChangeForm(CurrentForm.SIGN_UP);
     }, [onChangeForm]);
 
     React.useEffect(() => {
         if (isSuccess) {
-            const message = data?.message || 'Registration Successful!'
+            const message = data?.message || 'Login Successful!'
             toast.success(message);
-            onChangeForm(CurrentForm.VERIFICATION);
+            onChangeForm(CurrentForm.NONE);
         }
         if (error && 'data' in error) {
             toast.error((error.data as any).message);
@@ -56,7 +55,7 @@ const SignUp: React.FC<FormProp> = (props) => {
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col items-center">
                     <AcadiaLogoSmall />
                     <h2 className="text-center text-2xl font-bold leading-9 tracking-tight">
-                        Sign up for Acadia
+                        Sign in to your account
                     </h2>
                 </div>
 
@@ -65,30 +64,6 @@ const SignUp: React.FC<FormProp> = (props) => {
                         className="space-y-6"
                         onSubmit={handleSubmit}
                     >
-                        <CommonInput
-                            id="firstName"
-                            type="text"
-                            label='First Name'
-                            value={values.firstName}
-                            onChange={handleChange}
-                            placeholder='John'
-                            required
-                            errors={errors.firstName}
-                            showError={touched.lastName}
-                        />
-
-                        <CommonInput
-                            id="lastName"
-                            type="text"
-                            label='Last Name'
-                            value={values.lastName}
-                            onChange={handleChange}
-                            placeholder='Doe'
-                            required
-                            errors={errors.lastName}
-                            showError={touched.lastName}
-                        />
-
                         <CommonInput
                             id="email"
                             type="email"
@@ -110,13 +85,27 @@ const SignUp: React.FC<FormProp> = (props) => {
                         />
 
                         <CommonButton type='submit' className='w-full rounded-3xl' theme='solid'>
-                            Sign up
+                            Sign In
                         </CommonButton>
                     </form>
 
-                    <p className="mt-10 text-center text-sm text-gray-500">
-                        Already have an account?{' '}
-                        <button onClick={onChangeFormHandler} className="font-semibold leading-6 text-orange-500 hover:text-orange-600">Sign in</button>
+                    <div className='flex flex-col items-center justify-center mt-4 gap-2'>
+                        <p className='text-center text-sm text-gray-500'>
+                            Or Sign In with
+                        </p>
+                        <div className='flex items-center justify-center gap-3 mt-2'>
+                            <Link href='http://localhost:8000/auth/google' className='flex items-center justify-center'>
+                                <FcGoogle size={30} className='cursor-pointer' />
+                            </Link>
+                            <Link href='http://localhost:8000/auth/github' className='flex items-center justify-center'>
+                                <AiFillGithub size={30} className='cursor-pointer' />
+                            </Link>
+                        </div>
+                    </div>
+
+                    <p className="mt-4 text-center text-sm text-gray-500">
+                        Not a member?{' '}
+                        <button onClick={onChangeFormHandler} className="font-semibold leading-6 text-orange-500 hover:text-orange-600">Sign up</button>
                     </p>
                 </div>
             </div>
@@ -124,4 +113,4 @@ const SignUp: React.FC<FormProp> = (props) => {
     )
 }
 
-export default SignUp
+export default SignIn
