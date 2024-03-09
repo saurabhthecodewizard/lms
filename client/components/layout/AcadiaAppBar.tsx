@@ -34,7 +34,7 @@ const AcadiaAppBar = () => {
 
     return (
         <Box>
-            <div className='fixed flex items-center justify-between w-full bg-white border-white dark:bg-gray-900 dark:border-gray-900 px-4 py-2'>
+            <div className='fixed flex items-center justify-between w-full bg-slate-50 border-white dark:bg-gray-900 dark:border-gray-900 px-4 py-2'>
                 <div className='flex items-center justify-start'>
                     {/* <div className='lg:hidden rounded-full border border-white dark:border-slate-950 cursor-pointer'>
                         <HiMenuAlt4 className='w-10 h-10 p-2 lg:hidden rounded-full border border-white dark:border-slate-950 cursor-pointer' />

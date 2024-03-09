@@ -1,7 +1,7 @@
 'use client';
 
 import { configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "./features/api/apiSlice";
+import { apiSlice } from "./features/apiSlice";
 import authSlice from "./features/auth/authSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import sidebarSlice from "./features/sidebar/sidebar.slice";
@@ -24,8 +24,8 @@ export type AppDispatch = typeof store.dispatch;
 
 // Calling refresh token on every refresh
 const initializeApp = async () => {
-    await store.dispatch(apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true }));
-    await store.dispatch(apiSlice.endpoints.loadUser.initiate({}, { forceRefetch: true }));
+    await store.dispatch(apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true, subscriptionOptions: { pollingInterval: 1000 * 60 * 4 } }));
+    await store.dispatch(apiSlice.endpoints.loadUser.initiate({} as any, { forceRefetch: true }));
 };
 
 initializeApp();

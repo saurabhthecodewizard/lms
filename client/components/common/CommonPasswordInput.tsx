@@ -14,7 +14,7 @@ const CommonPasswordInput: React.FC<CommonPasswordInputProps> = (props) => {
 
     const onClickShowPassword = React.useCallback(() => setShowPassword(!showPassword), [showPassword]);
     return (
-        <div>
+        <div className='w-full'>
             {label && <label
                 htmlFor="password"
                 className="block text-sm font-medium leading-6">
@@ -28,7 +28,7 @@ const CommonPasswordInput: React.FC<CommonPasswordInputProps> = (props) => {
                     value={value}
                     onChange={onChange}
                     autoComplete="current-password"
-                    placeholder='password'
+                    placeholder='**********'
                     required
                     className={`${errors.length && 'border-red-500'} block w-full rounded-md border-0 p-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 />

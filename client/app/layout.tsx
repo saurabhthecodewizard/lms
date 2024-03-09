@@ -4,6 +4,8 @@ import { ThemeProvider } from '../utils/theme-provider';
 import { Toaster } from 'react-hot-toast';
 import { StoreProvider } from '@/redux/StoreProvider';
 import { Metadata } from 'next';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import theme from '@/utils/mui-theme';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -37,8 +39,10 @@ export default function RootLayout({
       <body className={`${poppins.variable} ${josefin.variable} bg-slate-200 dark:bg-slate-800 dark:to-slate-800 duration-300 text-gray-900 dark:text-gray-200`}>
         <StoreProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem >
-            {children}
-            <Toaster position='top-right' reverseOrder={false} />
+            <MuiThemeProvider theme={theme}>
+              {children}
+              <Toaster position='top-center' reverseOrder={false} />
+            </MuiThemeProvider>
           </ThemeProvider>
         </StoreProvider>
       </body>

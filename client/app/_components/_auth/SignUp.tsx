@@ -4,9 +4,9 @@ import { Box } from '@mui/material'
 import CurrentForm from './enums/currentForm.enum';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import CommonInput from '../../common/CommonInput';
-import CommonPasswordInput from '../../common/CommonPasswordInput';
-import CommonButton from '../../common/CommonButton';
+import CommonInput from '../../../components/common/CommonInput';
+import CommonPasswordInput from '../../../components/common/CommonPasswordInput';
+import CommonButton from '../../../components/common/CommonButton';
 import { useRegisterMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -31,6 +31,7 @@ const SignUp: React.FC<FormProp> = (props) => {
             email: '',
             password: ''
         },
+        enableReinitialize: true,
         validationSchema: schema,
         onSubmit: async ({ firstName, lastName, email, password }) => {
             const data = { firstName, lastName, email, password };

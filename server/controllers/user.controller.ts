@@ -248,17 +248,9 @@ export const externalAuth = CatchAsyncError(async (req: Request, res: Response, 
 
 export const updateUserInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { email, firstName, lastName } = req.body as UpdateUserInfo;
+        const { firstName, lastName } = req.body as UpdateUserInfo;
         const userId = req.user?._id;
         const user = await getUserById(userId);
-
-        if (email && user) {
-            const isEmailExist = await getUserByEmail(email);
-            if (isEmailExist) {
-                return next(new GlobalErrorHandler("Email already exists!", 400));
-            }
-            user.email = email;
-        }
 
         if (firstName && user) {
             user.firstName = firstName;

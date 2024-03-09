@@ -1,18 +1,18 @@
 'use client';
 import React from 'react';
-import AcadiaLogo from '../../common/AcadiaLogo';
+import AcadiaLogo from '../../../components/common/AcadiaLogo';
 import { navbarItems } from '@/lib/constants';
 import NavbarItem from './NavbarItem';
-import CommonButton from '../../common/CommonButton';
+import CommonButton from '../../../components/common/CommonButton';
 import { SlMenu } from 'react-icons/sl';
 import { BiX } from 'react-icons/bi';
 import ThemeSwitch from '@/utils/ThemeSwitch';
 import { SxProps, Theme } from '@mui/material';
-import CurrentForm from '../auth/enums/currentForm.enum';
-import FormModal from '../auth/FormModal';
-import SignIn from '../auth/SignIn';
-import SignUp from '../auth/SignUp';
-import Verification from '../auth/Verification';
+import CurrentForm from '../_auth/enums/currentForm.enum';
+import FormModal from '../_auth/FormModal';
+import SignIn from '../_auth/SignIn';
+import SignUp from '../_auth/SignUp';
+import Verification from '../_auth/Verification';
 
 const style: SxProps<Theme> = {
     position: 'absolute' as 'absolute',
@@ -78,7 +78,7 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
 
     return (
         <>
-            <nav className="flex items-center justify-between px-4 sm:px-20 md:px-28 lg:px-40 xl:px-60 py-1 bg-white border-white dark:bg-gray-900 dark:border-gray-900">
+            <nav className="flex items-center justify-between px-4 sm:px-20 md:px-28 lg:px-40 xl:px-60 py-1 bg-slate-50 border-white dark:bg-gray-900 dark:border-gray-900">
                 <div className='basis-1/3 flex items-center justify-start'>
                     <AcadiaLogo />
                 </div>

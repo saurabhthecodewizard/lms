@@ -1,5 +1,5 @@
-import { apiSlice } from "../api/apiSlice";
-import { login, register } from "./authSlice";
+import { apiSlice } from "../apiSlice";
+import { login, logout, register } from "./authSlice";
 
 
 interface RegisterResponse {
@@ -7,7 +7,7 @@ interface RegisterResponse {
     activationToken: string;
 }
 
-interface Register {}
+interface Register { }
 
 export const authApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -59,7 +59,21 @@ export const authApi = apiSlice.injectEndpoints({
                 }
             }
         }),
+        logout: builder.query({
+            query: () => ({
+                url: 'logout',
+                method: 'GET',
+                credentials: 'include' as const
+            }),
+            async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+                try {
+                    dispatch(logout())
+                } catch (error: any) {
+                    console.log(error);
+                }
+            }
+        })
     })
 })
 
-export const { useRegisterMutation, useActivateMutation, useLoginMutation } = authApi;
+export const { useRegisterMutation, useActivateMutation, useLoginMutation, useLogoutQuery } = authApi;

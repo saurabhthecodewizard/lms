@@ -5,10 +5,10 @@ import * as Yup from 'yup';
 import FormProp from './types/formProp.interface'
 import { Box } from '@mui/material'
 import CurrentForm from './enums/currentForm.enum';
-import CommonButton from '../../common/CommonButton';
+import CommonButton from '../../../components/common/CommonButton';
 import { AiFillGithub,  } from 'react-icons/ai';
-import CommonInput from '../../common/CommonInput';
-import CommonPasswordInput from '../../common/CommonPasswordInput';
+import CommonInput from '../../../components/common/CommonInput';
+import CommonPasswordInput from '../../../components/common/CommonPasswordInput';
 import { useLoginMutation } from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';

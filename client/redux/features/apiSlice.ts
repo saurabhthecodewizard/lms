@@ -1,6 +1,5 @@
+import UserProfile from "@/redux/interfaces/userProfile.interface";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { login } from "../auth/authSlice";
-
 
 export const apiSlice = createApi({
     reducerPath: 'api',
@@ -15,25 +14,12 @@ export const apiSlice = createApi({
                 credentials: 'include' as const
             })
         }),
-        loadUser: builder.query({
+        loadUser: builder.query<{ success: boolean, user: UserProfile }, void>({
             query: () => ({
                 url: 'profile',
                 method: 'GET',
                 credentials: 'include' as const
-            }),
-            async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-                try {
-                    const result = await queryFulfilled;
-                    dispatch(
-                        login({
-                            token: result.data.activationToken,
-                            user: result.data.user
-                        })
-                    )
-                } catch (error: any) {
-                    console.log(error);
-                }
-            }
+            })
         }),
     })
 });

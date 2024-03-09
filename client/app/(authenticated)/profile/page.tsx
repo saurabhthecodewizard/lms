@@ -1,66 +1,256 @@
 'use client'
 import React from 'react';
-import Protected from '@/hooks/useProtected';
+import { useChangePasswordMutation, useUpdateAvatarMutation, useUpdateProfileMutation } from '@/redux/features/profile/profile.api';
+import { useLoadUserQuery } from '@/redux/features/apiSlice';
+import UserProfile from '@/redux/interfaces/userProfile.interface';
+import toast from 'react-hot-toast';
+import * as Yup from 'yup';
+import UpdateProfile from '@/redux/interfaces/updateProfile.interface';
+import { useFormik } from 'formik';
+import { PiUserCircleLight } from 'react-icons/pi';
+import Image from 'next/image';
+import GenericTab, { TabProps } from '@/components/common/GenericTab';
+import CommonInput from '@/components/common/CommonInput';
+import { AiOutlineCamera } from 'react-icons/ai';
+import { Skeleton } from '@mui/material';
+import CommonButton from '@/components/common/CommonButton';
+import UpdatePassword from '@/redux/interfaces/updatePassword.interface';
+import CommonPasswordInput from '@/components/common/CommonPasswordInput';
+import useStringState from '@/hooks/useStringState';
+
+const initialState: UserProfile = {
+    id: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    role: 'user'
+}
+
+const schema = Yup.object().shape({
+    firstName: Yup.string().required('Please enter your first name'),
+    lastName: Yup.string()
+})
 
 const Page: React.FC = () => {
+    const { isLoading, isSuccess, data } = useLoadUserQuery();
+    const [updateProfile, updateProfileResult] = useUpdateProfileMutation();
+    const [updateAvatar, updateAvatarResult] = useUpdateAvatarMutation();
+    const [changePassword, changePasswordResult] = useChangePasswordMutation();
+    const { value: oldPassword, onValueChange: onChangeOldPassword } = useStringState('');
+    const { value: newPassword, onValueChange: onChangeNewPassword } = useStringState('');
+    const { value: confirmPassword, onValueChange: onChangeConfirmPassword } = useStringState('');
+    const [user, setUser] = React.useState<UserProfile>(initialState);
+    const { touched, errors, values, handleChange, handleSubmit } = useFormik<UpdateProfile>({
+        initialValues: user,
+        enableReinitialize: true,
+        validationSchema: schema,
+        onSubmit: async (profile) => {
+            await updateProfile(profile);
+        }
+    });
+
+    const onSubmitPasswordHandler = React.useCallback(() => {
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            toast.error('All fields are mandatory!')
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            toast.error('Passwords do not match!');
+            return;
+        }
+        changePassword({ oldPassword, newPassword });
+    }, [changePassword, confirmPassword, newPassword, oldPassword]);
+
+    const tabItems: TabProps[] = React.useMemo(() => [
+        {
+            label: 'General',
+            node: <div className='flex flex-col items-center justify-center gap-6 bg-slate-50 dark:bg-slate-900 w-80 sm:96 md:w-[500px] lg:w-[600px] xl:w-[700px] h-96 rounded-xl px-10 py-5'>
+
+                <CommonInput
+                    id='firstName'
+                    value={values.firstName}
+                    placeholder='First Name'
+                    label='First Name'
+                    errors={errors.firstName}
+                    type='text'
+                    onChange={handleChange}
+                    showError={touched.firstName}
+                    required
+                />
+
+                <CommonInput
+                    id='lastName'
+                    value={values.lastName || ''}
+                    placeholder='Last Name'
+                    label='Last Name'
+                    errors={errors.lastName}
+                    type='text'
+                    onChange={handleChange}
+                    showError={touched.lastName}
+                    required
+                />
+
+                <CommonInput
+                    id='email'
+                    value={user.email}
+                    placeholder='mail@mail.com'
+                    label='Email'
+                    type='email'
+                    disabled
+                />
+
+                <CommonButton theme='solid' onClick={handleSubmit} className='self-start px-8'>
+                    Save
+                </CommonButton>
+            </div>
+        },
+        {
+            label: 'Info',
+            node: <div className='flex flex-col items-center justify-start gap-6 bg-slate-50 dark:bg-slate-900 w-80 sm:96 md:w-[500px] lg:w-[600px] xl:w-[700px] h-96 rounded-xl px-10 py-5'>
+                <CommonInput
+                    id='courses'
+                    value={user.courses?.length ?? 0}
+                    placeholder='0'
+                    label='No. of Enrolled Courses'
+                    type='number'
+                    disabled
+                />
+            </div>
+        },
+        {
+            label: 'Password',
+            node: <div className='flex flex-col items-center justify-start gap-6 bg-slate-50 dark:bg-slate-900 w-80 sm:96 md:w-[500px] lg:w-[600px] xl:w-[700px] h-96 rounded-xl px-10 py-5'>
+
+
+                <CommonPasswordInput
+                    value={oldPassword}
+                    label='Old Password'
+                    onChange={onChangeOldPassword}
+                    errors=''
+                />
+
+                <CommonPasswordInput
+                    value={newPassword}
+                    label='New Password'
+                    onChange={onChangeNewPassword}
+                    errors=''
+                />
+
+                <CommonPasswordInput
+                    value={confirmPassword}
+                    label='Confirm Password'
+                    onChange={onChangeConfirmPassword}
+                    errors=''
+                />
+
+                <CommonButton theme='solid' onClick={onSubmitPasswordHandler} className='self-start px-8'>
+                    Save Password
+                </CommonButton>
+            </div>
+        }
+    ],
+        [
+            confirmPassword,
+            errors.firstName,
+            errors.lastName,
+            handleChange,
+            handleSubmit,
+            newPassword,
+            oldPassword,
+            onChangeConfirmPassword,
+            onChangeNewPassword,
+            onChangeOldPassword,
+            onSubmitPasswordHandler,
+            touched.firstName,
+            touched.lastName,
+            user.courses?.length,
+            user.email,
+            values.firstName,
+            values.lastName
+        ]
+    );
+
+    const onImageChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!event.target.files) {
+            toast.error('Something went wrong!')
+            return;
+        }
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+            if (fileReader.readyState === 2) {
+                const avatar = fileReader.result as string;
+                updateAvatar(avatar);
+            }
+        }
+        fileReader.readAsDataURL(event.target.files[0])
+    }, [updateAvatar])
+
+    React.useEffect(() => {
+        if (!isLoading && isSuccess && data) {
+            setUser(data.user);
+        }
+    }, [data, isLoading, isSuccess]);
+
+    React.useEffect(() => {
+        if (updateProfileResult.isSuccess) {
+            toast.success("Profile updated successfully")
+        }
+        if (updateProfileResult.isError) {
+            toast.error("Profile could not be updated")
+        }
+    }, [updateProfileResult.isError, updateProfileResult.isSuccess]);
+
+    React.useEffect(() => {
+        if (updateAvatarResult.isSuccess) {
+            toast.success("Profile picture updated successfully")
+        }
+        if (updateAvatarResult.isError) {
+            let message;
+            if ('data' in updateAvatarResult.error) {
+                message = (updateAvatarResult.error.data as any).message;
+            }
+            toast.error(message ?? "Profile picture could not be updated")
+        }
+    }, [updateAvatarResult.data, updateAvatarResult.error, updateAvatarResult.isError, updateAvatarResult.isSuccess]);
+
+    React.useEffect(() => {
+        if (changePasswordResult.isSuccess) {
+            toast.success("Password updated successfully")
+        }
+        if (changePasswordResult.isError) {
+            let message;
+            if ('data' in changePasswordResult.error) {
+                message = (changePasswordResult.error.data as any).message;
+            }
+            toast.error(message ?? "Password could not be updated")
+        }
+    }, [changePasswordResult.data, changePasswordResult.error, changePasswordResult.isError, changePasswordResult.isSuccess]);
+
     return (
-        <div>
-            The standard Lorem Ipsum passage, used since the 1500s
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-            Section 1.10.32 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-
-            1914 translation by H. Rackham
-            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?
-
-            Section 1.10.33 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-
-            1914 translation by H. Rackham
-            On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.
-            The standard Lorem Ipsum passage, used since the 1500s
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-            Section 1.10.32 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-
-            1914 translation by H. Rackham
-            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?
-
-            Section 1.10.33 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-
-            1914 translation by H. Rackham
-            On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.
-            The standard Lorem Ipsum passage, used since the 1500s
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-            Section 1.10.32 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-
-            1914 translation by H. Rackham
-            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?
-
-            Section 1.10.33 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-
-            1914 translation by H. Rackham
-            On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.
-            The standard Lorem Ipsum passage, used since the 1500s
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-            Section 1.10.32 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-
-            1914 translation by H. Rackham
-            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?
-
-            Section 1.10.33 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-
-            1914 translation by H. Rackham
-            On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.
+        <div className='flex flex-col items-center justify-center'>
+            <div className='relative flex rounded-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-900 p-4'>
+                {isLoading
+                    ? <Skeleton />
+                    : user.avatar
+                        ? <Image alt={user.firstName} src={user.avatar.url} height={0} width={0} className='w-40 rounded-full' />
+                        : <PiUserCircleLight size={200} />
+                }
+                <input
+                    type='file'
+                    id='avatar-profile'
+                    className='hidden'
+                    onChange={onImageChange}
+                    accept='image/png, image/jpf, image/jpeg, image,webp'
+                />
+                <label htmlFor='avatar-profile'>
+                    <div className='w-8 h-8 bg-slate-50 dark:bg-slate-900 rounded-full absolute bottom-2 right-2 flex items-center justify-center cursor-pointer'>
+                        <AiOutlineCamera size={20} className='z-1' />
+                    </div>
+                </label>
+            </div>
+            <div className='flex items-center justify-center'>
+                <GenericTab items={tabItems} />
+            </div>
         </div>
     )
 };

@@ -17,9 +17,9 @@ const AcadiaDrawer = () => {
             <Drawer
                 open={isOpen}
                 onClose={closeDrawer}
-                className='lg:hidden bg-white dark:bg-slate-900'
+                className='lg:hidden bg-slate-50 dark:bg-slate-900'
             >
-                <div className="w-60 flex flex-col bg-white dark:bg-slate-900 h-full">
+                <div className="w-60 flex flex-col bg-slate-50 dark:bg-slate-900 h-full">
                     <header className="p-4 font-bold text-lg">Header</header>
                     <NavItem />
                     <NavItem />
@@ -29,7 +29,7 @@ const AcadiaDrawer = () => {
 
 
 
-            <div className="w-80 hidden lg:flex lg:flex-col bg-white dark:bg-slate-900 h-full">
+            <div className="w-80 hidden lg:flex lg:flex-col bg-slate-50 dark:bg-slate-900 h-full">
                 <header className="p-8 font-bold text-lg">Header</header>
                 <NavItem />
                 <NavItem />
