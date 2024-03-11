@@ -22,8 +22,9 @@ const CommonInput: React.FC<CommonInputProps> = (props) => {
         <div className='w-full'>
             <label
                 htmlFor={id}
-                className={`block text-sm font-medium leading-6 ${labelClassName}`}>
+                className={`flex items-center justify-start text-sm font-medium leading-6 ${labelClassName}`}>
                 {label}
+                {required && <p className='text-red-500'>*</p>}
             </label>
             <div className="mt-1">
                 <input
@@ -38,11 +39,13 @@ const CommonInput: React.FC<CommonInputProps> = (props) => {
                     disabled={disabled}
                     className={`${showError && errors && 'border-red-500'} block w-full rounded-md border-0 p-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 ${inputClassName}`} />
             </div>
-            {showError && errors &&
+            {
+                showError && errors &&
                 <span className='text-red-500 pt-1 block'>
                     {errors}
-                </span>}
-        </div>
+                </span>
+            }
+        </div >
     )
 }
 

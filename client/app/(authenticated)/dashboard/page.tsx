@@ -1,10 +1,10 @@
 'use client'
 import React from 'react';
-import Profile from './_components/Profile';
+import Dashboard from './_components/Dashboard';
 
 const Page: React.FC = () => {
     return (
-        <Profile />
+        <Dashboard />
     )
 };
 

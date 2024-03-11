@@ -1,5 +1,4 @@
 'use client';
-import { Roboto } from 'next/font/google';
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -16,7 +15,27 @@ const theme = createTheme({
             "700": '#c2410c',
             "800": '#9a3412',
             "900": '#7c2d12'
-        }
+        },
+        // ...(mode === 'light' ?
+        // {
+        //     background: {
+        //         default: '#f8fafc',
+        //         paper: '#f8fafc'
+        //     },
+        //     text: {
+        //         primary: '#0f172a'
+        //     }
+        // }
+        // :
+        // {
+        //     background: {
+        //         default: '#18181b',
+        //         paper: '#18181b'
+        //     },
+        //     text: {
+        //         primary: '#f4f4f5'
+        //     }
+        // })
     }
 });
 

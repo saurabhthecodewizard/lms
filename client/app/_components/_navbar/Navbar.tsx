@@ -102,14 +102,14 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
                     </CommonButton>
                     {
                         toggle ?
-                            <BiX onClick={onClickToggleXHandler} className='text-orange-500 text-2xl flex xl:hidden' /> :
-                            <SlMenu onClick={onClickToggleMenuHandler} className='text-orange-500 text-2xl flex xl:hidden' />
+                            <BiX onClick={onClickToggleXHandler} className='cursor-pointer text-orange-500 text-2xl flex xl:hidden' /> :
+                            <SlMenu onClick={onClickToggleMenuHandler} className='cursor-pointer text-orange-500 text-2xl flex xl:hidden' />
                     }
                     <div
                         ref={menuRef}
                         className={`${toggle ? 'block z-50' : 'hidden'} xl:hidden fixed mt-16 sm:mt-20 py-4 rounded-2xl self-start right-2 sm:right-16 md:right-28 max-h-[32rem] w-28 border-gray-100 border-opacity-40 bg-opacity-90 bg-gray-100 shadow-lg shadow-black/[0.05] px-3 dark:bg-gray-900 dark:border-black/40 dark:bg-opacity-90`}
                     >
-                        <ul className='flex flex-col items-center justify-center h-full gap-y-4 text-[1rem] font-medium bg-'>
+                        <ul className='flex flex-col items-center justify-center h-full gap-y-4 text-[1rem] font-medium bg-slate-200 dark:bg-slate-900'>
                             {
                                 navbarItems.map((item) => (
                                     <NavbarItem

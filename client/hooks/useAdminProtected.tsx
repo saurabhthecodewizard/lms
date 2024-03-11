@@ -5,10 +5,10 @@ import LinearLoading from "@/components/common/LinearLoading";
 import useProfile from "./useProfile";
 
 
-export default function Protected({ children }: { children: React.ReactNode }) {
-    const { isError, isLoading } = useProfile();
+export default function AdminProtected({ children }: { children: React.ReactNode }) {
+    const { isError, isLoading, isAdmin } = useProfile();
     
-    if (isError) {
+    if (isError || !isAdmin) {
         redirect('/');
     }
     

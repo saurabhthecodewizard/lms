@@ -17,8 +17,9 @@ const CommonPasswordInput: React.FC<CommonPasswordInputProps> = (props) => {
         <div className='w-full'>
             {label && <label
                 htmlFor="password"
-                className="block text-sm font-medium leading-6">
+                className="flex items-center justify-start text-sm font-medium leading-6">
                 {label}
+                <p className='text-red-500'>*</p>
             </label>}
             <div className="mt-1 relative">
                 <input
