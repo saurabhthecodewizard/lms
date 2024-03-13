@@ -9,6 +9,8 @@ import CommonTextArea from '@/components/common/CommonTextArea';
 import toast from 'react-hot-toast';
 import { AddCircleOutline, DeleteOutline } from '@mui/icons-material';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
+import Iframe from 'react-iframe';
+import AcadiaVideoFrame from '@/components/common/AcadiaVideoFrame';
 
 const courseSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -311,6 +313,12 @@ const CreateCourse = () => {
                             </button>
                         </div>
                     </form>
+            },
+            {
+                title: 'Course Preview',
+                subTitle: '',
+                component:
+                    <AcadiaVideoFrame videoId='AgyJv2Qelwk' />
             }
         ]
     }, [addBenefitHandler, addCourseVideoHandler, addPrerequisiteHandler, errors.demoUrl, errors.description, errors.estimatedPrice, errors.level, errors.name, errors.price, errors.tags, errors.thumbnail, handleChange, handleSubmit, onSubmitHandler, removeBenefitHandler, removeCourseVideoHandler, removePrerequisiteHandler, setFieldValue, touched.demoUrl, touched.description, touched.estimatedPrice, touched.level, touched.name, touched.price, touched.tags, touched.thumbnail, values.benefits, values.courseData, values.demoUrl, values.description, values.estimatedPrice, values.level, values.name, values.prerequisites, values.price, values.tags, values.thumbnail, visibleCourseSection])
