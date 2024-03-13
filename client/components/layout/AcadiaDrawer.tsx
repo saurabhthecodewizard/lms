@@ -11,6 +11,7 @@ import { IoPersonCircleOutline } from 'react-icons/io5';
 import { IconType } from 'react-icons';
 import { RxDashboard } from 'react-icons/rx';
 import { FaUsers } from 'react-icons/fa';
+import { MdCreateNewFolder } from 'react-icons/md';
 
 interface DrawerItemProps {
     icon: IconType;
@@ -28,6 +29,11 @@ const drawerItems: DrawerItemProps[] = [
         label: 'Dashboard',
         href: '/dashboard',
         icon: RxDashboard
+    },
+    {
+        label: 'Create Course',
+        href: '/admin/courses/new',
+        icon: MdCreateNewFolder
     },
     {
         label: 'Users',

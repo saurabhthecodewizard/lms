@@ -100,11 +100,11 @@ const AcadiaAppBar = () => {
                                 }
                             }}
                         >
-                            <div className='bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-2'>
-                                <MenuItem className='hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-start gap-2' onClick={onClickProfileHandler}>
+                            <div className='bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-2 w-28'>
+                                <MenuItem className='hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center gap-2' onClick={onClickProfileHandler}>
                                     <p>Profile</p>
                                 </MenuItem>
-                                <MenuItem className='hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-start gap-2' onClick={onClickLogoutHandler}>
+                                <MenuItem className='hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center gap-2' onClick={onClickLogoutHandler}>
                                     <p>Logout</p>
                                     {logoutResult.isLoading || logoutResult.isFetching && <FaCircleNotch className='h-5 w-5 animate-spin' />}
                                 </MenuItem>

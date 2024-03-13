@@ -1,11 +1,10 @@
 import React from 'react';
 
-interface CommonInputProps {
+interface CommonTextAreaProps {
     id: string;
     label?: string;
-    type?: React.HTMLInputTypeAttribute;
     value: string | number | readonly string[];
-    onChange?: React.ChangeEventHandler<any>;
+    onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
     autoComplete?: React.HTMLInputAutoCompleteAttribute;
     placeholder: string;
     required?: boolean;
@@ -16,8 +15,8 @@ interface CommonInputProps {
     disabled?: boolean;
 }
 
-const CommonInput: React.FC<CommonInputProps> = (props) => {
-    const { id, label, type, value, onChange, autoComplete, placeholder, required, showError, errors, labelClassName, inputClassName, disabled } = props;
+const CommonTextArea: React.FC<CommonTextAreaProps> = (props) => {
+    const { id, label, value, onChange, autoComplete, placeholder, required, showError, errors, labelClassName, inputClassName, disabled } = props;
     return (
         <div className='w-full'>
             <label
@@ -27,10 +26,9 @@ const CommonInput: React.FC<CommonInputProps> = (props) => {
                 {required && <p className='text-red-500'>*</p>}
             </label>
             <div className="mt-1">
-                <input
+                <textarea
                     id={id}
                     name={id}
-                    type={type}
                     value={value}
                     onChange={onChange}
                     autoComplete={autoComplete}
@@ -49,4 +47,4 @@ const CommonInput: React.FC<CommonInputProps> = (props) => {
     )
 }
 
-export default CommonInput
+export default CommonTextArea;
