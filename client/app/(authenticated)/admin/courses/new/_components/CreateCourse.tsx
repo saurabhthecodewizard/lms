@@ -38,7 +38,7 @@ const courseSchema = Yup.object().shape({
 
 const CreateCourse = () => {
     const [createCourseMutation, createCourseMutationResult] = useCreateCourseMutation();
-    const { values, errors, touched, handleChange, setFieldValue, handleSubmit, isSubmitting } = useFormik<CreateCourse>({
+    const { values, errors, touched, handleChange, setFieldValue, handleSubmit, isValid } = useFormik<CreateCourse>({
         initialValues: {
             name: '',
             description: '',
@@ -46,7 +46,7 @@ const CreateCourse = () => {
             estimatedPrice: 0,
             thumbnail: '',
             tags: '',
-            level: '', 
+            level: '',
             demoUrl: '',
             benefits: [{ title: '' }],
             prerequisites: [{ title: '' }],
@@ -109,6 +109,15 @@ const CreateCourse = () => {
     const removeCourseVideoHandler = React.useCallback((requiredIndex: number) => {
         setFieldValue('courseData', values.courseData.filter((_, index) => requiredIndex != index));
     }, [setFieldValue, values.courseData]);
+
+    React.useEffect(() => {
+        if (!createCourseMutationResult.isLoading && createCourseMutationResult.isSuccess) {
+            toast.success('Course created successfully!');
+        }
+        if (!createCourseMutationResult.isLoading && createCourseMutationResult.isError) {
+            toast.success('Something went wrong!');
+        }
+    }, [createCourseMutationResult.isError, createCourseMutationResult.isLoading, createCourseMutationResult.isSuccess])
 
     const items: AcadiaStepperItem[] = React.useMemo(() => {
         return [
@@ -324,11 +333,49 @@ const CreateCourse = () => {
                 component:
                     <div className='w-full h-auto overflow-auto'>
                         <CoursePreview course={values} />
-                        <CommonButton theme='solid' type='submit' className='ml-4 mb-4' onClick={onSubmitHandler}>Submit</CommonButton>
+                        <CommonButton
+                            theme='solid'
+                            type='submit'
+                            className='ml-4 mb-4'
+                            onClick={onSubmitHandler}
+                            loading={createCourseMutationResult.isLoading}
+                            isValid={isValid}
+                        >
+                            Submit
+                        </CommonButton>
                     </div>
             }
         ]
-    }, [addBenefitHandler, addCourseVideoHandler, addPrerequisiteHandler, errors.demoUrl, errors.description, errors.estimatedPrice, errors.level, errors.name, errors.price, errors.tags, errors.thumbnail, handleChange, handleSubmit, onSubmitHandler, removeBenefitHandler, removeCourseVideoHandler, removePrerequisiteHandler, setFieldValue, touched.demoUrl, touched.description, touched.estimatedPrice, touched.level, touched.name, touched.price, touched.tags, touched.thumbnail, values, visibleCourseSection])
+    }, [addBenefitHandler, 
+        addCourseVideoHandler, 
+        addPrerequisiteHandler, 
+        createCourseMutationResult.isLoading, 
+        errors.demoUrl, 
+        errors.description, 
+        errors.estimatedPrice, 
+        errors.level, 
+        errors.name, 
+        errors.price, 
+        errors.tags, 
+        errors.thumbnail, 
+        handleChange, 
+        handleSubmit, 
+        isValid, 
+        onSubmitHandler, 
+        removeBenefitHandler, 
+        removeCourseVideoHandler, 
+        removePrerequisiteHandler, 
+        setFieldValue, 
+        touched.demoUrl, 
+        touched.description, 
+        touched.estimatedPrice, 
+        touched.level, 
+        touched.name, 
+        touched.price, 
+        touched.tags, 
+        touched.thumbnail, 
+        values, 
+        visibleCourseSection])
 
     return (
         <AcadiaStepper items={items} />

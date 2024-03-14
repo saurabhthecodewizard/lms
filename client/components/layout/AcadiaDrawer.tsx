@@ -12,6 +12,7 @@ import { IconType } from 'react-icons';
 import { RxDashboard } from 'react-icons/rx';
 import { FaUsers } from 'react-icons/fa';
 import { MdCreateNewFolder } from 'react-icons/md';
+import { SiSololearn } from 'react-icons/si';
 
 interface DrawerItemProps {
     icon: IconType;
@@ -29,6 +30,11 @@ const drawerItems: DrawerItemProps[] = [
         label: 'Dashboard',
         href: '/dashboard',
         icon: RxDashboard
+    },
+    {
+        label: 'All Courses',
+        href: '/admin/courses',
+        icon: SiSololearn
     },
     {
         label: 'Create Course',

@@ -3,9 +3,10 @@ import Image from 'next/image';
 import React from 'react';
 import AcadiaVideoFrame from './common/AcadiaVideoFrame';
 import CommonButton from './common/CommonButton';
-import StarComponent from './common/StarComponent';
+import StarComponent from './common/features/StarComponent';
 import { IoCheckmarkDone } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
+import CourseRating from './common/features/CourseRating';
 
 interface CoursePreviewProps {
     course: CreateCourse & { rating?: number; };
@@ -55,13 +56,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                 <div className='flex flex-col gap-8 basis-1/2'>
                     <div className='flex flex-col'>
                         <Heading>{course.name}</Heading>
-
-                        <div className="flex items-center">
-                            <StarComponent />
-                            <p className="ms-2 text-sm font-bold text-slate-900 dark:text-slate-50">{course.rating ?? 4.5}</p>
-                            <span className="w-1 h-1 mx-1.5 bg-slate-500 rounded-full dark:bg-slate-400"></span>
-                            <p className="text-sm font-medium slate-gray-900 underline hover:no-underline dark:text-slate-50">73 reviews</p>
-                        </div>
+                        <CourseRating rating={course.rating ?? 4.5} reviews={46} />
                     </div>
 
                     <div className='flex flex-col gap-1'>
