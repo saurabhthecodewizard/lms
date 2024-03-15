@@ -13,7 +13,7 @@ interface CommonButtonProps {
 }
 
 const CommonButton: React.FC<CommonButtonProps> = (props) => {
-    const { theme, type, className, children, isValid = false, loading = false, rounded = 'lg', onClick } = props;
+    const { theme, type, className, children, isValid = true, loading = false, rounded = 'lg', onClick } = props;
     return (
         <button
             type={type}
