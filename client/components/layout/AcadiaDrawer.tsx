@@ -14,6 +14,7 @@ import { RxDashboard } from 'react-icons/rx';
 import { FaUsers } from 'react-icons/fa';
 import { MdCreateNewFolder } from 'react-icons/md';
 import { SiSololearn } from 'react-icons/si';
+import { GoLog } from 'react-icons/go';
 
 interface DrawerItemProps {
     icon: IconType;
@@ -46,6 +47,11 @@ const drawerItems: DrawerItemProps[] = [
         label: 'Users',
         href: '/admin/users',
         icon: FaUsers
+    },
+    {
+        label: 'Invoices',
+        href: '/admin/orders',
+        icon: GoLog
     }
 ]
 
