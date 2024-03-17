@@ -7,12 +7,12 @@ import React from 'react';
 import ProfilePic from '../common/ProfilePic';
 import AcadiaLogo from '../common/AcadiaLogo';
 import { usePathname, useRouter } from 'next/navigation';
-import {  } from 'next/router'
+import { } from 'next/router'
 import { IoPersonCircleOutline } from 'react-icons/io5';
 import { IconType } from 'react-icons';
 import { RxDashboard } from 'react-icons/rx';
 import { FaUsers } from 'react-icons/fa';
-import { MdCreateNewFolder } from 'react-icons/md';
+import { MdCreateNewFolder, MdOutlineAnalytics } from 'react-icons/md';
 import { SiSololearn } from 'react-icons/si';
 import { GoLog } from 'react-icons/go';
 
@@ -32,6 +32,11 @@ const drawerItems: DrawerItemProps[] = [
         label: 'Dashboard',
         href: '/dashboard',
         icon: RxDashboard
+    },
+    {
+        label: 'Dashboard',
+        href: '/admin/logs',
+        icon: MdOutlineAnalytics
     },
     {
         label: 'Courses',
@@ -133,6 +138,12 @@ const DrawerItem: React.FC<DrawerItemProps> = (props) => {
     const isActive = React.useMemo(() => {
         return pathname.includes(href);
     }, [href, pathname]);
+
+    React.useEffect(() => {
+        if (pathname === '/admin') {
+            router.push('/admin/logs')
+        }
+    }, [pathname, router]);
 
     return (
         <button
