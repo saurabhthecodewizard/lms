@@ -5,7 +5,7 @@ interface CreateCourse {
     description: string;
     price: number;
     estimatedPrice?: number;
-    thumbnail: string;
+    thumbnail?: string;
     tags: string;
     level: string;
     demoUrl: string;

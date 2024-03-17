@@ -34,7 +34,7 @@ const drawerItems: DrawerItemProps[] = [
         icon: RxDashboard
     },
     {
-        label: 'All Courses',
+        label: 'Courses',
         href: '/admin/courses',
         icon: SiSololearn
     },

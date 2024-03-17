@@ -1,10 +1,11 @@
+'use client'
 import React from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import CreateCourse from '@/redux/interfaces/courses/createCourse.interface';
+import { useFetchAllCoursesQuery, useFetchCourseQuery, useUpdateCourseMutation } from '@/redux/features/courses/course.api';
+import CourseForm from '../_components/CourseForm';
 import toast from 'react-hot-toast';
-import { useCreateCourseMutation, useFetchAllCoursesQuery } from '@/redux/features/courses/course.api';
-import CourseForm from '../../_components/CourseForm';
 import { useRouter } from 'next/navigation';
 
 const courseSchema = Yup.object().shape({
@@ -30,11 +31,12 @@ const courseSchema = Yup.object().shape({
     })).required('At least one course data is required'),
 });
 
-const CreateCourse = () => {
-    const [createCourseMutation, createCourseMutationResult] = useCreateCourseMutation();
+export default function Page({ params }: { params: { slug: string } }) {
+    const { data, isLoading, isSuccess } = useFetchCourseQuery(params.slug);
+    const [updateCourseMutation, updateCourseMutationResult] = useUpdateCourseMutation();
     const { refetch } = useFetchAllCoursesQuery();
     const router = useRouter();
-    const { values, errors, touched, handleChange, setFieldValue, handleSubmit } = useFormik<CreateCourse>({
+    const { values, errors, touched, handleChange, setFieldValue, handleSubmit, setValues } = useFormik<CreateCourse>({
         initialValues: {
             name: '',
             description: '',
@@ -54,24 +56,33 @@ const CreateCourse = () => {
             }],
         },
         validationSchema: courseSchema,
-        onSubmit: async () => {},
+        onSubmit: async () => { },
     });
 
     const onSubmitHandler = React.useCallback(() => {
         console.log(values);
-        createCourseMutation(values);
-    }, [createCourseMutation, values]);
+        updateCourseMutation({ courseId: params.slug, course: values });
+    }, [params.slug, updateCourseMutation, values]);
 
     React.useEffect(() => {
-        if (!createCourseMutationResult.isLoading && createCourseMutationResult.isSuccess) {
-            toast.success('Course created successfully!');
+        if (isSuccess && !isLoading && !!data) {
+            setValues({
+                ...data.course,
+                thumbnail: data.course.thumbnail?.url
+            });
+        }
+    }, [data, isLoading, isSuccess, setValues]);
+
+    React.useEffect(() => {
+        if (!updateCourseMutationResult.isLoading && updateCourseMutationResult.isSuccess) {
+            toast.success('Course updated successfully!');
             refetch();
             router.push('/admin/courses');
         }
-        if (!createCourseMutationResult.isLoading && createCourseMutationResult.isError) {
+        if (!updateCourseMutationResult.isLoading && updateCourseMutationResult.isError) {
             toast.success('Something went wrong!');
         }
-    }, [createCourseMutationResult.isError, createCourseMutationResult.isLoading, createCourseMutationResult.isSuccess, refetch, router])
+    }, [refetch, router, updateCourseMutationResult.isError, updateCourseMutationResult.isLoading, updateCourseMutationResult.isSuccess])
 
     return (
         <CourseForm
@@ -80,12 +91,10 @@ const CreateCourse = () => {
             touched={touched}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
-            isLoading={createCourseMutationResult.isLoading}
+            isLoading={isLoading}
             isValid={true}
             onSubmitHandler={onSubmitHandler}
             setFieldValue={setFieldValue}
         />
     )
 }
-
-export default CreateCourse;

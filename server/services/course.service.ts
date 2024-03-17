@@ -15,7 +15,7 @@ export const updateCourse = (courseId: string, data: any) => CourseModel.findByI
 );
 
 export const getCourseDetails = (courseId: string) => CourseModel.findById(courseId).select(
-    "-courseData.videoUrl -courseData.suggestions -courseData.comments -courseData.links"
+    "-courseData.suggestions -courseData.comments -courseData.links"
 );
 
 export const getAllCourses = () => CourseModel.find().select(

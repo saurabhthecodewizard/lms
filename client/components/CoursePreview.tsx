@@ -31,7 +31,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
         <div className='flex flex-col items-center justify-center gap-4 pb-4'>
             <Image
                 alt={course.name}
-                src={course.thumbnail}
+                src={course.thumbnail ?? ''}
                 height={0}
                 width={0}
                 className='object-fill w-full max-h-96'
@@ -54,9 +54,10 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
 
                 </div>
                 <div className='flex flex-col gap-8 basis-1/2'>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-2'>
                         <Heading>{course.name}</Heading>
                         <CourseRating rating={course.rating ?? 4.5} reviews={46} />
+                        <p className='text-sm'>{course.description}</p>
                     </div>
 
                     <div className='flex flex-col gap-1'>
@@ -77,7 +78,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                         <Heading>Course Overview</Heading>
                         <div className='flex flex-col gap-2 mt-2'>
                             {course.courseData.map((content, index) => (
-                                <div key={content.title} className='bg-slate-200 dark:bg-slate-800 rounded-lg p-2'>
+                                <div key={content.title} className='flex flex-col bg-slate-200 dark:bg-slate-800 rounded-lg p-2 gap-2'>
                                     <div className='flex items-center justify-between'>
                                         <p className='text-base'>{content.title}</p>
                                         {index === visibleCourseSection
@@ -87,6 +88,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                                     </div>
                                     {index === visibleCourseSection && <>
                                         <p className='text-sm text-slate-500'>{content.videoLength} min</p>
+                                        <AcadiaVideoFrame videoId={content.videoUrl} />
                                         <p className='text-sm'>{content.description}</p>
                                     </>}
                                 </div>

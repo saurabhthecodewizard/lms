@@ -45,9 +45,13 @@ export const updateExistingCourse = CatchAsyncError(async (req: Request, res: Re
     try {
         const data = req.body;
 
+        const courseId = req.params.id;
+
+        const existingCourse = await getCourseDetails(courseId);
+
         const thumbnail = data.thumbnail;
-        if (!!thumbnail) {
-            await cloudinary.v2.uploader.destroy(thumbnail.public_id);
+        if (!!thumbnail && (typeof data.thumbnail === 'string') && !!existingCourse && !!((existingCourse.thumbnail as any).public_id)) {
+            await cloudinary.v2.uploader.destroy((existingCourse.thumbnail as any).public_id);
             const thumbnailCloud = await cloudinary.v2.uploader.upload(thumbnail, {
                 folder: "courses"
             });
@@ -57,8 +61,6 @@ export const updateExistingCourse = CatchAsyncError(async (req: Request, res: Re
                 url: thumbnailCloud.secure_url
             }
         }
-
-        const courseId = req.params.id;
 
         const course = await updateCourse(courseId, data);
 
@@ -74,25 +76,12 @@ export const updateExistingCourse = CatchAsyncError(async (req: Request, res: Re
 export const getCourseInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const courseId = req.params.id;
-        const cachedCourse = await redis.get(courseId);
+        const course = await getCourseDetails(courseId);
 
-        if (cachedCourse) {
-            const course = JSON.parse(cachedCourse);
-            res.status(200).json({
-                success: true,
-                course
-            });
-        } else {
-            const course = await getCourseDetails(courseId);
-
-            // Courses will expire from redis in 7 days
-            redis.set(courseId, JSON.stringify(course), "EX", 604800);
-
-            res.status(200).json({
-                success: true,
-                course
-            });
-        }
+        res.status(200).json({
+            success: true,
+            course
+        });
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 500));
     }
@@ -374,7 +363,7 @@ export const deleteCourse = CatchAsyncError(async (req: Request, res: Response, 
 
         const course = await getCourseById(courseId);
 
-        if(!course) {
+        if (!course) {
             return next(new GlobalErrorHandler("Course not found!", 400))
         }
 

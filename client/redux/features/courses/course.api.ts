@@ -1,10 +1,16 @@
-import CourseBasic from "@/redux/interfaces/courses/courseBasic.interface";
+import CourseInfo from "@/redux/interfaces/courses/courseInfo.interface";
 import { apiSlice } from "../apiSlice";
 import CreateCourse from "@/redux/interfaces/courses/createCourse.interface";
+import CourseBasic from "@/redux/interfaces/courses/courseBasic.interface";
 
 interface AllCoursesResponse {
     success: boolean;
     courses: CourseBasic[];
+}
+
+interface CourseInfoResponse {
+    success: boolean;
+    course: CourseInfo;
 }
 
 export const courseApi = apiSlice.injectEndpoints({
@@ -23,8 +29,23 @@ export const courseApi = apiSlice.injectEndpoints({
                 method: 'GET',
                 credentials: 'include' as const
             })
-        })
+        }),
+        fetchCourse: builder.query<CourseInfoResponse, string>({
+            query: (courseId) => ({
+                url: `course/${courseId}`,
+                method: 'GET',
+                credentials: 'include' as const
+            })
+        }),
+        updateCourse: builder.mutation<void, { courseId: string, course: CreateCourse }>({
+            query: (data) => ({
+                url: `course/${data.courseId}`,
+                method: 'PUT',
+                body: data.course,
+                credentials: 'include' as const
+            })
+        }),
     })
 })
 
-export const { useCreateCourseMutation, useFetchAllCoursesQuery } = courseApi
+export const { useCreateCourseMutation, useFetchAllCoursesQuery, useFetchCourseQuery, useUpdateCourseMutation } = courseApi
