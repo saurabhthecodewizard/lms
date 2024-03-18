@@ -6,7 +6,7 @@ import FormProp from './types/formProp.interface'
 import { Box } from '@mui/material'
 import CurrentForm from './enums/currentForm.enum';
 import CommonButton from '../../../components/common/CommonButton';
-import { AiFillGithub,  } from 'react-icons/ai';
+import { AiFillGithub, } from 'react-icons/ai';
 import CommonInput from '../../../components/common/CommonInput';
 import CommonPasswordInput from '../../../components/common/CommonPasswordInput';
 import { useLoginMutation } from '@/redux/features/auth/authApi';
@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import AcadiaLogoSmall from '@/components/common/AcadiaLogoSmall';
+import useProfile from '@/hooks/useProfile';
 
 const schema = Yup.object().shape({
     email: Yup.string().email('Invalid email!').required('Please enter your email'),
@@ -23,6 +24,7 @@ const schema = Yup.object().shape({
 const SignIn: React.FC<FormProp> = (props) => {
     const { onChangeForm } = props;
     const [login, { isSuccess, error, data }] = useLoginMutation();
+    const { refetch } = useProfile();
     const { touched, errors, values, handleChange, handleSubmit } = useFormik({
         initialValues: {
             email: '',
@@ -42,12 +44,13 @@ const SignIn: React.FC<FormProp> = (props) => {
         if (isSuccess) {
             const message = data?.message || 'Login Successful!'
             toast.success(message);
+            refetch();
             onChangeForm(CurrentForm.NONE);
         }
         if (error && 'data' in error) {
             toast.error((error.data as any).message);
         }
-    }, [data?.message, error, isSuccess, onChangeForm]);
+    }, [data?.message, error, isSuccess, onChangeForm, refetch]);
 
     return (
         <Box className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] sm:w-[500px] bg-slate-200 dark:bg-slate-800 border-1 border-black shadow-md p-4 rounded-xl'>

@@ -4,7 +4,7 @@ import AcadiaLogo from '../../../components/common/AcadiaLogo';
 import { navbarItems } from '@/lib/constants';
 import NavbarItem from './NavbarItem';
 import CommonButton from '../../../components/common/CommonButton';
-import { SlMenu } from 'react-icons/sl';
+import { SlLogout, SlMenu } from 'react-icons/sl';
 import { BiX } from 'react-icons/bi';
 import ThemeSwitch from '@/utils/ThemeSwitch';
 import { SxProps, Theme } from '@mui/material';
@@ -13,6 +13,11 @@ import FormModal from '../_auth/FormModal';
 import SignIn from '../_auth/SignIn';
 import SignUp from '../_auth/SignUp';
 import Verification from '../_auth/Verification';
+import useProfile from '@/hooks/useProfile';
+import { useRouter } from 'next/navigation';
+import { FaExternalLinkAlt } from 'react-icons/fa';
+import { useLazyLogoutQuery } from '@/redux/features/auth/authApi';
+import toast from 'react-hot-toast';
 
 const style: SxProps<Theme> = {
     position: 'absolute' as 'absolute',
@@ -33,6 +38,11 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
     const [modalOpen, setModalOpen] = React.useState<boolean>(false);
     const [currentForm, setCurrentForm] = React.useState<CurrentForm>(CurrentForm.NONE);
     const menuRef = React.useRef<HTMLDivElement>(null);
+
+    const router = useRouter();
+
+    const { isLoggedIn, refetch } = useProfile();
+    const [logout, logoutQueryResult] = useLazyLogoutQuery();
 
     const onChangeFormHandler = React.useCallback((selected: CurrentForm) => {
         setCurrentForm(selected);
@@ -62,12 +72,27 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
         setToggle(true);
     }, []);
 
+    const onClickExploreHandler = React.useCallback(() => {
+        router.push('/profile');
+    }, [router]);
+
+    const onClickLogoutHandler = React.useCallback(() => {
+        logout();
+    }, [logout]);
+
     React.useEffect(() => {
         document.addEventListener('mousedown', onClickOutsideHandler);
         return () => {
             document.removeEventListener('mousedown', onClickOutsideHandler);
         };
     }, [onClickOutsideHandler]);
+
+    React.useEffect(() => {
+        if (logoutQueryResult.isSuccess) {
+            toast.success('Logged out successfully');
+            refetch();
+        }
+    }, [logoutQueryResult.isSuccess, refetch]);
 
     return (
         <>
@@ -88,9 +113,21 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
                 </div>
                 <div className='basis-1/3 flex items-center justify-end gap-4'>
                     <ThemeSwitch />
-                    <CommonButton onClick={onModalOpenHandler} theme='outline'>
-                        Sign In
-                    </CommonButton>
+                    {isLoggedIn
+                        ? <div className='flex items-center justify-center gap-2'>
+                            <CommonButton theme='solid' className='hover:scale-110' onClick={onClickExploreHandler}>
+                                <div className='flex items-center justify-center gap-2'>
+                                    <p className='text-base'>Explore</p>
+                                    <FaExternalLinkAlt />
+                                </div>
+                            </CommonButton>
+                            <CommonButton theme='outline' className='px-2' onClick={onClickLogoutHandler}>
+                                <SlLogout title='Logout' />
+                            </CommonButton>
+                        </div>
+                        : <CommonButton onClick={onModalOpenHandler} theme='outline'>
+                            Sign In
+                        </CommonButton>}
                     {
                         toggle ?
                             <BiX onClick={onClickToggleXHandler} className='cursor-pointer text-orange-500 text-2xl flex xl:hidden' /> :

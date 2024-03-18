@@ -34,7 +34,7 @@ const Page: React.FC = () => {
             <div className='px-8 sm:px-20 md:px-28 xl:px-96 h-screen flex flex-col flex-grow gap-4 items-center bg-gradient-to-br from-slate-400 to-slate-50 dark:from-slate-500 dark:to-slate-950 overflow-auto'>
                 <p className='mt-28 sm:mt-40 text-5xl text-orange-500'>CONTACT US</p>
                 <div className='mb-80 flex flex-col items-center gap-4 w-full px-8'>
-                    <div className='mb-12 flex flex-col items-start justify-center gap-2 shadow-2xl p-4'>
+                    <div className='my-12 flex flex-col items-start justify-center gap-2 shadow-2xl p-4'>
                         <div className='flex items-center justify-center gap-2'>
                             <GrMapLocation className='text-orange-500' />
                             <p className='text-base'>Pune, India</p>

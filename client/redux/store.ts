@@ -24,7 +24,7 @@ export type AppDispatch = typeof store.dispatch;
 
 // Calling refresh token on every refresh
 const initializeApp = async () => {
-    await store.dispatch(apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true, subscriptionOptions: { pollingInterval: 1000 * 60 * 4 } }));
+    await store.dispatch(apiSlice.endpoints.refreshToken.initiate(void true, { forceRefetch: true, subscriptionOptions: { pollingInterval: 1000 * 60 * 4 } }));
     await store.dispatch(apiSlice.endpoints.loadUser.initiate({} as any, { forceRefetch: true }));
 };
 
