@@ -7,7 +7,6 @@ import React from 'react';
 import ProfilePic from '../common/ProfilePic';
 import AcadiaLogo from '../common/AcadiaLogo';
 import { usePathname, useRouter } from 'next/navigation';
-import { } from 'next/router'
 import { IoPersonCircleOutline } from 'react-icons/io5';
 import { IconType } from 'react-icons';
 import { RxDashboard } from 'react-icons/rx';
