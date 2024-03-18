@@ -29,7 +29,6 @@ const style: SxProps<Theme> = {
 interface NavbarProps { }
 
 const Navbar: React.FC<NavbarProps> = (_props) => {
-    const [active, setActive] = React.useState('home');
     const [toggle, setToggle] = React.useState<boolean>(false);
     const [modalOpen, setModalOpen] = React.useState<boolean>(false);
     const [currentForm, setCurrentForm] = React.useState<CurrentForm>(CurrentForm.NONE);
@@ -70,15 +69,9 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
         };
     }, [onClickOutsideHandler]);
 
-    const onChangeItemHandler = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-        const value = event.currentTarget.value;
-        setActive(value);
-        setToggle(false);
-    }, []);
-
     return (
         <>
-            <nav className="flex items-center justify-between px-4 sm:px-20 md:px-28 lg:px-40 xl:px-60 py-1 bg-slate-50 border-white dark:bg-gray-900 dark:border-gray-900">
+            <nav className="fixed w-full flex items-center justify-between px-4 sm:px-20 md:px-28 lg:px-40 xl:px-60 py-1 bg-slate-50 border-white dark:bg-gray-900 dark:border-gray-900">
                 <div className='basis-1/3 flex items-center justify-start'>
                     <AcadiaLogo />
                 </div>
@@ -89,8 +82,6 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
                                 key={item.link}
                                 title={item.title}
                                 link={item.link}
-                                activeLink={active}
-                                onChange={onChangeItemHandler}
                             />
                         ))
                     }
@@ -116,8 +107,6 @@ const Navbar: React.FC<NavbarProps> = (_props) => {
                                         key={item.link}
                                         title={item.title}
                                         link={item.link}
-                                        activeLink={active}
-                                        onChange={onChangeItemHandler}
                                     />
                                 ))
                             }

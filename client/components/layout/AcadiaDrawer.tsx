@@ -147,7 +147,7 @@ const DrawerItem: React.FC<DrawerItemProps> = (props) => {
     return (
         <button
             onClick={onClickHandler}
-            className={`flex items-center gap-4 h-14 pl-4 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg cursor-pointer ${isActive ? 'font-bold bg-slate-200 dark:bg-slate-800 text-orange-500' : ''}`}>
+            className={`flex items-center gap-4 h-14 pl-4 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg cursor-pointer ${isActive ? 'font-bold bg-slate-200 dark:bg-slate-800 text-orange-500' : 'text-slate-900 dark:text-slate-100'}`}>
             <Icon size={30} className='items-start' />
             <div className="flex w-full">
                 {label}

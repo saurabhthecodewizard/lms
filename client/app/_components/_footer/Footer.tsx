@@ -3,8 +3,8 @@ import { HiOutlineMail } from 'react-icons/hi';
 
 const Footer = () => {
     return (
-        <footer className='bottom-0 bg-slate-500 h-60 w-full flex flex-col items-center justify-between'>
-            <div className='flex flex-col items-center justify-center mt-4 gap-4 w-full'>
+        <footer className='fixed bottom-0 bg-slate-500 h-40 w-full flex flex-col items-center justify-between'>
+            <div className='flex flex-col items-center justify-center mt-2 gap-1 w-full'>
                 <p className='font-Poppins text-base'>Become a lifelong learner</p>
                 <div className="relative w-[400px] sm:w-[600px] md:w-[700px] lg:w-[800px]">
                     <input
@@ -18,7 +18,7 @@ const Footer = () => {
                     </button>
                 </div>
                 <div className="">
-                    <div className="mb-6 flex justify-center space-x-2 text-orange-500">
+                    <div className="flex justify-center space-x-2 text-orange-500">
                         <a
                             href="#!"
                             type="button"
@@ -117,7 +117,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-            <p className='pb-4'>Copyright © 2024 Acadia | All Rights Reserved.</p>
+            <p>Copyright © 2024 Acadia | All Rights Reserved.</p>
         </footer>
     )
 }
