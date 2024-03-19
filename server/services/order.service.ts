@@ -10,7 +10,7 @@ export const getAllOrders = async () => {
     try {
         const orders = await OrderModel.find().sort({ createdAt: -1 }).populate([
             { path: 'userId', model: UserModel, select: 'firstName lastName' },
-            { path: 'courseId', model: CourseModel, select: 'name' }
+            { path: 'courseId', model: CourseModel, select: 'name price' }
         ]).exec();
 
         // Modify orders to include concatenated name
@@ -18,16 +18,12 @@ export const getAllOrders = async () => {
             const user = order.userId as any; // Cast userId as any to avoid TypeScript errors
             const course = order.courseId as any; // Cast courseId as any
             const fullName = user.firstName + ' ' + user.lastName;
+            const price = course.price;
             return {
                 ...order.toObject(),
-                user: {
-                    _id: user._id,
-                    name: fullName
-                },
-                course: {
-                    _id: course._id,
-                    name: course.name
-                }
+                userFullName: fullName,
+                courseName: course.name,
+                price,
             };
         }).map(({ courseId, userId, ...rest }) => rest);;
 

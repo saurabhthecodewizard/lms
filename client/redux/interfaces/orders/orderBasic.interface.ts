@@ -1,14 +1,9 @@
 interface OrderBasic {
     _id: string;
     createdAt: string;
-    user: {
-        _id: string;
-        name: string;
-    };
-    course: {
-        _id: string;
-        name: string;
-    };
+    userFullName: string;
+    courseName: string;
+    price: number;
 }
 
 export default OrderBasic;

@@ -14,16 +14,19 @@ const columns: GridColDef[] = [
         valueGetter: ({ value }) => value && moment(new Date(value)).format('LL'),
     },
     {
-        field: 'user',
+        field: 'userFullName',
         headerName: 'User',
         flex: 1,
-        valueGetter: ({ value }) => value.name,
     },
     {
-        field: 'course',
+        field: 'courseName',
         headerName: 'Course Name',
         flex: 1,
-        valueGetter: ({ value }) => value.name,
+    },
+    {
+        field: 'price',
+        headerName: 'Price',
+        valueGetter: ({ value }) => '€' + value,
     },
 ];
 
