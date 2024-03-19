@@ -5,6 +5,7 @@ import React from 'react'
 import { LuMonitorPlay } from 'react-icons/lu';
 import LectureHeading from './LectureHeading';
 import LectureOverview from './LectureOverview';
+import CourseDiscussions from './CourseDiscussions';
 
 interface CourseContentProps {
     title: string;
@@ -42,6 +43,13 @@ const CourseContent: React.FC<CourseContentProps> = (props) => {
                 />
             }
         ];
+
+        if (!!selectedContent) {
+            items.push({
+                label: 'Discussions',
+                node: <CourseDiscussions />
+            })
+        }
 
         return items;
     }, [content, description, onLectureClickHandler, selectedContent, title]);

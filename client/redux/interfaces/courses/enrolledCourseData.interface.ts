@@ -1,3 +1,5 @@
+import Comment from "./comment.interface";
+
 interface EnrolledCourseData {
     title: string;
     description: string;
