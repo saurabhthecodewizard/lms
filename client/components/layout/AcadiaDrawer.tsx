@@ -11,7 +11,7 @@ import { IoPersonCircleOutline } from 'react-icons/io5';
 import { IconType } from 'react-icons';
 import { RxDashboard } from 'react-icons/rx';
 import { FaUsers } from 'react-icons/fa';
-import { MdCreateNewFolder, MdOutlineAnalytics } from 'react-icons/md';
+import { MdOutlineAnalytics } from 'react-icons/md';
 import { SiSololearn } from 'react-icons/si';
 import { GoLog } from 'react-icons/go';
 
@@ -33,7 +33,7 @@ const drawerItems: DrawerItemProps[] = [
         icon: RxDashboard
     },
     {
-        label: 'Dashboard',
+        label: 'Logs',
         href: '/admin/logs',
         icon: MdOutlineAnalytics
     },
@@ -41,11 +41,6 @@ const drawerItems: DrawerItemProps[] = [
         label: 'Courses',
         href: '/admin/courses',
         icon: SiSololearn
-    },
-    {
-        label: 'Create Course',
-        href: '/admin/courses/new',
-        icon: MdCreateNewFolder
     },
     {
         label: 'Users',
@@ -57,7 +52,7 @@ const drawerItems: DrawerItemProps[] = [
         href: '/admin/orders',
         icon: GoLog
     }
-]
+];
 
 const AcadiaDrawer = () => {
     const { isOpen } = useAppSelector(state => state.sidebar);

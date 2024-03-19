@@ -89,23 +89,13 @@ export const getCourseInfo = CatchAsyncError(async (req: Request, res: Response,
 
 export const getAllAvailableCourses = CatchAsyncError(async (_req: Request, res: Response, next: NextFunction) => {
     try {
-        const allCachedCourses = await redis.get('allCourses');
-        if (allCachedCourses) {
-            const courses = JSON.parse(allCachedCourses);
-            res.status(200).json({
-                success: true,
-                courses
-            });
-        } else {
-            const courses = await getAllCourses();
 
-            await redis.set('allCourses', JSON.stringify(courses));
+        const courses = await getAllCourses();
 
-            res.status(200).json({
-                success: true,
-                courses
-            });
-        }
+        res.status(200).json({
+            success: true,
+            courses
+        });
     } catch (err: any) {
         return next(new GlobalErrorHandler(err.message, 500));
     }
