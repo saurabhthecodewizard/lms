@@ -3,7 +3,6 @@ import Image from 'next/image';
 import React from 'react';
 import AcadiaVideoFrame from './common/AcadiaVideoFrame';
 import CommonButton from './common/CommonButton';
-import StarComponent from './common/features/StarComponent';
 import { IoCheckmarkDone } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import CourseRating from './common/features/CourseRating';

@@ -53,34 +53,38 @@ const CourseList: React.FC<CourseListProps> = (props) => {
                         Add new Course
                     </CommonButton>}
                 </div>
-                {courses.map((course) => (
-                    <div key={course._id} className='w-full bg-slate-50 dark:bg-slate-900 rounded-lg sm:flex items-center gap-4 p-2'>
-                        <Image
-                            id={course._id}
-                            alt={course.name}
-                            src={course.thumbnail?.url ?? ''}
-                            height={0}
-                            width={0}
-                            className='w-full sm:w-60 max-h-40 sm:max-h-80 pb-2 sm:pb-0 cursor-pointer'
-                            onClick={onImageClickHandler}
-                        />
-                        <div className='flex flex-col'>
-                            <p className='text-lg font-bold'>{course.name}</p>
-                            <CourseRating rating={Number(course.rating?.toFixed(1) ?? 4.5)} reviews={course.reviews.length} />
-                            <p className='text-base line-clamp-2'>{course.description}</p>
-                            <p className='text-base text-slate-500'>{course.level}</p>
-                            <p className='text-sm line-clamp-1'>{course.tags}</p>
-                            <div className='flex items-center gap-2 pt-4'>
-                                <p className='text-xl font-bold'>€{course.price}</p>
-                                {course.estimatedPrice && <>
-                                    <p className='text-sm line-through'>€{course.estimatedPrice}</p>
-                                    <p>{Math.round(((course.estimatedPrice - course.price) / course.estimatedPrice) * 100)}% OFF</p>
-                                </>}
+                <div className='flex flex-col items-center justify-center gap-8 w-full'>
+                    {!!courses.length
+                        ? courses.map((course) => (
+                            <div key={course._id} className='w-full bg-slate-50 dark:bg-slate-900 rounded-lg sm:flex items-center gap-4 p-2'>
+                                <Image
+                                    id={course._id}
+                                    alt={course.name}
+                                    src={course.thumbnail?.url ?? ''}
+                                    height={0}
+                                    width={0}
+                                    className='w-full sm:w-60 max-h-40 sm:max-h-80 pb-2 sm:pb-0 cursor-pointer'
+                                    onClick={onImageClickHandler}
+                                />
+                                <div className='flex flex-col'>
+                                    <p className='text-lg font-bold'>{course.name}</p>
+                                    <CourseRating rating={Number(course.rating?.toFixed(1) ?? 4.5)} reviews={course.reviews.length} />
+                                    <p className='text-base line-clamp-2'>{course.description}</p>
+                                    <p className='text-base text-slate-500'>{course.level}</p>
+                                    <p className='text-sm line-clamp-1'>{course.tags}</p>
+                                    <div className='flex items-center gap-2 pt-4'>
+                                        <p className='text-xl font-bold'>€{course.price}</p>
+                                        {course.estimatedPrice && <>
+                                            <p className='text-sm line-through'>€{course.estimatedPrice}</p>
+                                            <p>{Math.round(((course.estimatedPrice - course.price) / course.estimatedPrice) * 100)}% OFF</p>
+                                        </>}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
-                    </div>
-                ))}
+                        ))
+                        : <p className='text-xl text-orange-500 italic'>Empty</p>
+                    }
+                </div>
             </div>
     )
 }

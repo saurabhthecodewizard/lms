@@ -101,6 +101,23 @@ export const getAllAvailableCourses = CatchAsyncError(async (_req: Request, res:
     }
 });
 
+export const getEnrolledCourses = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const allEnrolledCourses = req.user?.courses;
+
+        if (!allEnrolledCourses) {
+            return next(new GlobalErrorHandler("Something went wrong!", 404));
+        }
+
+        res.status(200).json({
+            success: true,
+            content: allEnrolledCourses.map((course: any) => course._id)
+        });
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 500));
+    }
+});
+
 export const getEnrolledCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const allEnrolledCourses = req.user?.courses;
@@ -108,7 +125,7 @@ export const getEnrolledCourse = CatchAsyncError(async (req: Request, res: Respo
 
         const isCourseExists = allEnrolledCourses?.some((course: any) => course._id.toString() === requestedCourseId);
         if (!isCourseExists) {
-            return next(new GlobalErrorHandler("Course not found!", 404));
+            return next(new GlobalErrorHandler("Course not enrolled!", 404));
         }
 
         const course = await getCourseById(requestedCourseId);

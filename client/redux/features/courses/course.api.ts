@@ -8,6 +8,11 @@ interface AllCoursesResponse {
     courses: CourseBasic[];
 }
 
+interface AllEnrolledCoursesResponse {
+    success: boolean;
+    content: string[];
+}
+
 interface CourseInfoResponse {
     success: boolean;
     course: CourseInfo;
@@ -37,6 +42,13 @@ export const courseApi = apiSlice.injectEndpoints({
                 credentials: 'include' as const
             })
         }),
+        fetchAllEnrolledCourses: builder.query<AllEnrolledCoursesResponse, void>({
+            query: () => ({
+                url: 'course/enrolled/all',
+                method: 'GET',
+                credentials: 'include' as const
+            })
+        }),
         fetchCourse: builder.query<CourseInfoResponse, string>({
             query: (courseId) => ({
                 url: `course/${courseId}`,
@@ -55,4 +67,4 @@ export const courseApi = apiSlice.injectEndpoints({
     })
 })
 
-export const { useCreateCourseMutation, useFetchAllCoursesQuery, useFetchAvailableCoursesQuery, useFetchCourseQuery, useUpdateCourseMutation } = courseApi
+export const { useCreateCourseMutation, useFetchAllCoursesQuery, useFetchAvailableCoursesQuery, useFetchAllEnrolledCoursesQuery, useFetchCourseQuery, useUpdateCourseMutation } = courseApi
