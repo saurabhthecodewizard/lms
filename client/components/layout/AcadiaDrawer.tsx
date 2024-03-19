@@ -19,6 +19,7 @@ interface DrawerItemProps {
     icon: IconType;
     label: string;
     href: string;
+    onClick?: () => void;
 }
 
 const drawerItems: DrawerItemProps[] = [
@@ -92,6 +93,7 @@ const AcadiaDrawer = () => {
                                 href={item.href}
                                 label={item.label}
                                 icon={item.icon}
+                                onClick={closeDrawer}
                             />)}
                     </div>
                 </div>
@@ -121,13 +123,16 @@ const AcadiaDrawer = () => {
 };
 
 const DrawerItem: React.FC<DrawerItemProps> = (props) => {
-    const { label, href, icon: Icon } = props;
+    const { label, href, icon: Icon, onClick } = props;
     const pathname = usePathname();
     const router = useRouter();
 
     const onClickHandler = React.useCallback(() => {
+        if (onClick) {
+            onClick();
+        }
         router.push(href);
-    }, [href, router]);
+    }, [href, onClick, router]);
 
     const isActive = React.useMemo(() => {
         return pathname.includes(href);

@@ -5,7 +5,7 @@ interface MobileSideBarState {
 }
 
 const sideBarInitialState: MobileSideBarState = {
-    isOpen: true
+    isOpen: false
 }
 
 const sidebarSlice = createSlice({

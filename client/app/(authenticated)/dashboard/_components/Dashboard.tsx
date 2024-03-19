@@ -25,7 +25,7 @@ const Dashboard = () => {
       return []
     }
     return data.courses
-      .filter((course) => !allEnrolledCourses.content.includes(course._id))
+      .filter((course) => allEnrolledCourses.content.includes(course._id))
       .filter((course) => course.name.toLowerCase().includes(search.toLowerCase()));
   }, [allEnrolledCourses, data, search])
 
@@ -55,7 +55,7 @@ const Dashboard = () => {
   return (
     <>
       <div className='w-full flex items-center justify-end'>
-        <FormControlLabel control={<Switch checked={showEnrolledOnly} onChange={onChangeEnrolledToggleHandler} />} label="Show EnrolledOnly" sx={{ placeSelf: 'flex-end' }} />
+        <FormControlLabel control={<Switch checked={showEnrolledOnly} onChange={onChangeEnrolledToggleHandler} />} label="Show Enrolled Only" sx={{ placeSelf: 'flex-end' }} />
       </div>
 
       <CourseList
