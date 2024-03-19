@@ -9,6 +9,7 @@ import CourseRating from './common/features/CourseRating';
 
 interface CoursePreviewProps {
     course: CreateCourse & { rating?: number; };
+    enrolled?: boolean;
 }
 
 const Heading: React.FC<{ children: string }> = (props) => {
@@ -23,7 +24,7 @@ const CheckDoneText: React.FC<{ children: string }> = (props) => {
 }
 
 const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
-    const { course } = props;
+    const { course, enrolled = false } = props;
     const [visibleCourseSection, setVisibleCourseSection] = React.useState(-1);
 
     return (
@@ -38,18 +39,22 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
             <div className='flex flex-col sm:flex-row-reverse justify-between w-full gap-2 px-4'>
                 <div className='flex flex-col gap-3 basis-1/2'>
                     <AcadiaVideoFrame videoId={course.demoUrl} />
-                    <div className='flex sm:flex-col gap-2 justify-between sm:justify-start'>
-                        <div className='flex items-center gap-2'>
-                            <p className='text-xl font-bold'>€{course.price}</p>
-                            {course.estimatedPrice && <>
-                                <p className='text-sm line-through'>€{course.estimatedPrice}</p>
-                                <p>{Math.round(((course.estimatedPrice - course.price) / course.estimatedPrice) * 100)}% OFF</p>
-                            </>}
+                    {!enrolled
+                        ? <div className='flex sm:flex-col gap-2 justify-between sm:justify-start'>
+                            <div className='flex items-center gap-2'>
+                                <p className='text-xl font-bold'>€{course.price}</p>
+                                {course.estimatedPrice && <>
+                                    <p className='text-sm line-through'>€{course.estimatedPrice}</p>
+                                    <p>{Math.round(((course.estimatedPrice - course.price) / course.estimatedPrice) * 100)}% OFF</p>
+                                </>}
+                            </div>
+                            <CommonButton theme='solid' className='w-fit' rounded='full'>
+                                BUY NOW
+                            </CommonButton>
                         </div>
-                        <CommonButton theme='solid' className='w-fit' rounded='full'>
-                            BUY NOW
-                        </CommonButton>
-                    </div>
+                        : <div className='flex items-center justify-center'>
+                            <p className='text-sm italic text-orange-500'>You have purchased this course</p>
+                        </div>}
 
                 </div>
                 <div className='flex flex-col gap-8 basis-1/2'>
@@ -73,7 +78,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                         ))}
                     </div>
 
-                    <div className='flex flex-col'>
+                    {!enrolled && <div className='flex flex-col'>
                         <Heading>Course Overview</Heading>
                         <div className='flex flex-col gap-2 mt-2'>
                             {course.courseData.map((content, index) => (
@@ -93,7 +98,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </div>
         </div>

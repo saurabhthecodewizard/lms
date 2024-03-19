@@ -13,6 +13,7 @@ import sendMail from "../utils/sendMail";
 import AddReview from "../interfaces/addReview.interface";
 import { Review } from "../models/course.model";
 import { createNotification } from "../services/norification.service";
+import { getUserById } from "../services/user.service";
 
 
 export const uploadCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -120,10 +121,16 @@ export const getEnrolledCourses = CatchAsyncError(async (req: Request, res: Resp
 
 export const getEnrolledCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const allEnrolledCourses = req.user?.courses;
+        const currentUser = req.user;
         const requestedCourseId = req.params.id;
 
-        const isCourseExists = allEnrolledCourses?.some((course: any) => course._id.toString() === requestedCourseId);
+        if (!currentUser) {
+            return next(new GlobalErrorHandler("Something went wrong!", 404));
+        }
+
+        const user = await getUserById(currentUser._id);
+
+        const isCourseExists = user?.courses?.some((course: any) => course._id.toString() === requestedCourseId);
         if (!isCourseExists) {
             return next(new GlobalErrorHandler("Course not enrolled!", 404));
         }
