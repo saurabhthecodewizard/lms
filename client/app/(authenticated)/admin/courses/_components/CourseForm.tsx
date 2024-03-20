@@ -279,7 +279,7 @@ const CourseForm: React.FC<CourseFormProps> = (props) => {
                 subTitle: '',
                 component:
                     <div className='w-full h-auto overflow-auto'>
-                        <CoursePreview course={values} />
+                        <CoursePreview course={values} isAdminPreview />
                         <CommonButton
                             theme='solid'
                             type='submit'

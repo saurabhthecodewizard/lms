@@ -60,7 +60,7 @@ const Dashboard = () => {
 
       <CourseList
         courses={showEnrolledOnly ? filteredEnrolledCourses : courses}
-        isLoading={isLoading || isFetching}
+        isLoading={isLoading || isFetching || isAllEnrolledCoursesLoading}
         onImageClickHandler={onImageClickHandler}
         search={search}
         onSearchChangeHandler={onSearchChangeHandler}

@@ -38,6 +38,7 @@ export interface PreviewCourse {
 interface CoursePreviewProps {
     course: PreviewCourse;
     enrolled?: boolean;
+    isAdminPreview?: boolean;
 }
 
 const Heading: React.FC<{ children: string }> = (props) => {
@@ -52,7 +53,7 @@ const CheckDoneText: React.FC<{ children: string }> = (props) => {
 }
 
 const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
-    const { course, enrolled = false } = props;
+    const { course, enrolled = false, isAdminPreview = false } = props;
     const [visibleCourseSection, setVisibleCourseSection] = React.useState(-1);
 
     return (
@@ -120,7 +121,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                                     </div>
                                     {index === visibleCourseSection && <>
                                         <p className='text-sm text-slate-500'>{content.videoLength} min</p>
-                                        <AcadiaVideoFrame videoId={content.videoUrl} />
+                                        {isAdminPreview && <AcadiaVideoFrame videoId={content.videoUrl} />}
                                         <p className='text-sm'>{content.description}</p>
                                     </>}
                                 </div>

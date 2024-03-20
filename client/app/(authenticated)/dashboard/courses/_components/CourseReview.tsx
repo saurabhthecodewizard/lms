@@ -36,10 +36,6 @@ const CourseReview: React.FC<CourseReviewProps> = (props) => {
     }, []);
 
     const submitAddCommentHandler = React.useCallback(() => {
-        if (review.length === 0) {
-            toast.error('Review is empty!');
-            return;
-        }
         setReview('');
         addReview({
             courseId,

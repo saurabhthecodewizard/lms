@@ -86,7 +86,8 @@ const CourseReviewComment: React.FC<CourseReviewCommentProps> = (props) => {
                 <div className="ml-2 w-full">
                     <h3 className="font-semibold">{comment.user.firstName} {comment.user.lastName}</h3>
                     {!level && <AcadiaHoverRating value={rating} readOnly />}
-                    <p className="text-slate-600 dark:text-slate-400">{comment.comment}</p>
+                    {comment.comment && !!comment.comment.length &&
+                        <p className="text-slate-600 dark:text-slate-400">{comment.comment}</p>}
                     {!level && isAdmin && <>
                         {isReplyToggle
                             ? <div className="flex flex-col gap-2 w-full mt-2">
