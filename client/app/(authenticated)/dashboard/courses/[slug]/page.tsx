@@ -30,6 +30,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             items.push({
                 label: 'Course Content',
                 node: <CourseContent 
+                id={params.slug}
                 title={course.name}
                 description={course.description}
                 videoUrl={course.demoUrl}
@@ -39,7 +40,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         }
 
         return items;
-    }, [course, enrolledData?.content, isEnrolled]);
+    }, [course, enrolledData?.content, isEnrolled, params.slug]);
 
     React.useEffect(() => {
         if (isSuccess && !isLoading && !!data) {

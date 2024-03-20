@@ -6,8 +6,11 @@ import { LuMonitorPlay } from 'react-icons/lu';
 import LectureHeading from './LectureHeading';
 import LectureOverview from './LectureOverview';
 import CourseDiscussions from './CourseDiscussions';
+import Comment from '@/redux/interfaces/courses/comment.interface';
+import CourseReview from './CourseReview';
 
 interface CourseContentProps {
+    id: string;
     title: string;
     description: string;
     videoUrl: string;
@@ -15,7 +18,7 @@ interface CourseContentProps {
 }
 
 const CourseContent: React.FC<CourseContentProps> = (props) => {
-    const { title, description, videoUrl, content } = props;
+    const { id, title, description, videoUrl, content } = props;
     const [selectedContent, setSelectedContent] = React.useState<EnrolledCourseData | null>(null);
 
     const onLectureClickHandler = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -36,23 +39,31 @@ const CourseContent: React.FC<CourseContentProps> = (props) => {
             },
             {
                 label: 'Overview',
-                node: <LectureOverview 
-                title={!!selectedContent ? selectedContent.title : title}
-                description={!!selectedContent ? selectedContent.description : description}
-                length={!!selectedContent ? selectedContent.videoLength : undefined}
+                node: <LectureOverview
+                    title={!!selectedContent ? selectedContent.title : title}
+                    description={!!selectedContent ? selectedContent.description : description}
+                    length={!!selectedContent ? selectedContent.videoLength : undefined}
                 />
+            },
+            {
+                label: 'Reviews',
+                node: <CourseReview />
             }
         ];
 
         if (!!selectedContent) {
             items.push({
                 label: 'Discussions',
-                node: <CourseDiscussions />
+                node: <CourseDiscussions
+                    courseId={id}
+                    contentId={selectedContent._id}
+                    comments={selectedContent.comments}
+                />
             })
         }
 
         return items;
-    }, [content, description, onLectureClickHandler, selectedContent, title]);
+    }, [content, description, id, onLectureClickHandler, selectedContent, title]);
 
     return (
         <div className='flex flex-col gap-4 w-full'>

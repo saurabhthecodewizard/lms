@@ -222,7 +222,7 @@ export const addReply = CatchAsyncError(async (req: Request, res: Response, next
 
         const newReply: any = {
             user: req.user,
-            reply
+            comment: reply
         };
 
         comment.replies?.push(newReply);

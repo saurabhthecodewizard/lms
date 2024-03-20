@@ -7,8 +7,34 @@ import { IoCheckmarkDone } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import CourseRating from './common/features/CourseRating';
 
+interface PreviewCourseData {
+    title: string;
+    description: string;
+    videoUrl: string;
+    videoLength: number;
+}
+
+interface PreviewCourse {
+    name: string;
+    description: string;
+    price: number;
+    estimatedPrice?: number;
+    thumbnail?: string;
+    tags: string;
+    level: string;
+    demoUrl: string;
+    benefits: {
+        title: string;
+    }[];
+    prerequisites: {
+        title: string;
+    }[];
+    courseData: PreviewCourseData[];
+    rating?: number;
+}
+
 interface CoursePreviewProps {
-    course: CreateCourse & { rating?: number; };
+    course: PreviewCourse;
     enrolled?: boolean;
 }
 

@@ -3,6 +3,10 @@ import { apiSlice } from "../apiSlice";
 import CourseInfo from "@/redux/interfaces/courses/courseInfo.interface";
 import CreateCourse from "@/redux/interfaces/courses/createCourse.interface";
 import EnrolledCourseData from "@/redux/interfaces/courses/enrolledCourseData.interface";
+import CreateComment from "@/redux/interfaces/courses/comments/createComment.interface";
+import CreateReply from "@/redux/interfaces/courses/comments/createReply.interface";
+import CreateReview from "@/redux/interfaces/courses/comments/createReview.interface";
+import CreateReviewReply from "@/redux/interfaces/courses/comments/createReviewReply.interface";
 
 interface AllCoursesResponse {
     success: boolean;
@@ -77,7 +81,50 @@ export const courseApi = apiSlice.injectEndpoints({
                 credentials: 'include' as const
             })
         }),
+        addComment: builder.mutation<void, { courseId: string, comment: CreateComment }>({
+            query: (data) => ({
+                url: `course/${data.courseId}/comment`,
+                method: 'PUT',
+                body: data.comment,
+                credentials: 'include' as const
+            })
+        }),
+        addCommentReply: builder.mutation<void, { courseId: string, reply: CreateReply }>({
+            query: (data) => ({
+                url: `course/${data.courseId}/reply`,
+                method: 'PUT',
+                body: data.reply,
+                credentials: 'include' as const
+            })
+        }),
+        addReview: builder.mutation<void, { courseId: string, review: CreateReview }>({
+            query: (data) => ({
+                url: `course/${data.courseId}/review`,
+                method: 'PUT',
+                body: data.review,
+                credentials: 'include' as const
+            })
+        }),
+        addReviewReply: builder.mutation<void, { courseId: string, reviewId: string, reviewReply: CreateReviewReply }>({
+            query: (data) => ({
+                url: `course/${data.courseId}/review/${data.reviewId}`,
+                method: 'PUT',
+                body: data.reviewReply,
+                credentials: 'include' as const
+            })
+        })
     })
 })
 
-export const { useCreateCourseMutation, useFetchAllCoursesQuery, useFetchAvailableCoursesQuery, useFetchAllEnrolledCoursesQuery, useFetchCourseQuery, useFetchEnrolledCourseDataQuery, useUpdateCourseMutation } = courseApi
+export const {
+    useCreateCourseMutation,
+    useFetchAllCoursesQuery,
+    useFetchAvailableCoursesQuery,
+    useFetchAllEnrolledCoursesQuery,
+    useFetchCourseQuery,
+    useFetchEnrolledCourseDataQuery,
+    useUpdateCourseMutation,
+    useAddCommentMutation,
+    useAddCommentReplyMutation,
+    useAddReviewMutation,
+    useAddReviewReplyMutation } = courseApi
