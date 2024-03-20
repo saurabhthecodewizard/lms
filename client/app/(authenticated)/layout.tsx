@@ -16,7 +16,7 @@ export default function RootLayout({
                     <div className='fixed h-full'>
                         <AcadiaDrawer />
                     </div>
-                    <main className="mt-8 px-6 md:px-28 lg:px-28 xl:px-40 2xl:px-80 lg:ml-80 xl:ml-72 2xl:ml-80 w-full">
+                    <main className="mt-8 px-6 md:px-20 lg:ml-80 xl:ml-72 2xl:ml-80 w-full">
                         {children}
                     </main>
                 </div>

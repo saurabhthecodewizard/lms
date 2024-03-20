@@ -6,7 +6,7 @@ import moment from 'moment';
 import React from 'react'
 
 const columns: GridColDef[] = [
-    { field: '_id', headerName: 'ID', type: 'number' },
+    { field: '_id', headerName: 'ID', type: 'number', flex: 1, },
     {
         field: 'createdAt',
         headerName: 'Purchase Date',

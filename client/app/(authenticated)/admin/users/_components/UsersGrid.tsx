@@ -17,7 +17,7 @@ const columns: GridColDef[] = [
       return <Avatar alt="O" src={params.value.url} />
     }
   },
-  { field: '_id', headerName: 'ID', type: 'number' },
+  { field: '_id', headerName: 'ID', type: 'number', flex: 1, },
   {
     field: 'firstName',
     headerName: 'First name',

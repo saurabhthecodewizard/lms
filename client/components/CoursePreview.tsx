@@ -111,9 +111,9 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                 </div>
             </div>
             <div className='flex flex-col gap-4 w-full px-4'>
-                {!enrolled && <div className='flex flex-col'>
+                {!enrolled && <div className='flex flex-col items-center justify-center w-full gap-1'>
                     <Heading>Course Overview</Heading>
-                    <div className='flex flex-col gap-2 mt-2'>
+                    <div className='flex flex-col gap-2 mt-2 w-full'>
                         {course.courseData.map((content, index) => (
                             <div key={content.title} className='flex flex-col bg-slate-200 dark:bg-slate-800 rounded-lg p-2 gap-2'>
                                 <div className='flex items-center justify-between'>
@@ -134,7 +134,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                 </div>}
 
                 {!enrolled && course._id && !!course.reviews && 
-                <div className='flex flex-col items-center justify-center gap-4'>
+                <div className='flex flex-col items-center justify-center gap-1'>
                     <Heading>Reviews</Heading>
                     <CourseReview courseId={course._id} reviews={course.reviews} showAddReview={false} />
                 </div>}

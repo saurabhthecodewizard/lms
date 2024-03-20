@@ -61,13 +61,17 @@ export default function Page({ params }: { params: { slug: string } }) {
         }
     }, [data, isLoading, isSuccess]);
 
-    return isLoading || isEnrolledLoading || !course
-        ? <div className="flex w-full items-center justify-center">
-            <CircularProgress />
+    return (
+        <div className="xl:px-60">
+            {isLoading || isEnrolledLoading || !course
+                ? <div className="flex w-full items-center justify-center">
+                    <CircularProgress />
+                </div>
+                : !isEnrolled
+                    ? <CoursePreview course={course} enrolled={isEnrolled} />
+                    : <div className='flex items-center justify-center'>
+                        <GenericTab items={tabItems} />
+                    </div>}
         </div>
-        : !isEnrolled
-            ? <CoursePreview course={course} enrolled={isEnrolled} />
-            : <div className='flex items-center justify-center'>
-                <GenericTab items={tabItems} />
-            </div>
+    )
 }

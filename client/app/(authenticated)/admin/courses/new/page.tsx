@@ -4,7 +4,9 @@ import CreateCourse from './_components/CreateCourse';
 
 const Page: React.FC = () => {
     return (
-        <CreateCourse />
+        <div className='xl:px-60'>
+            <CreateCourse />
+        </div>
     )
 };
 

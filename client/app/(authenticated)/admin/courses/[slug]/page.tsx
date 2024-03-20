@@ -85,16 +85,18 @@ export default function Page({ params }: { params: { slug: string } }) {
     }, [refetch, router, updateCourseMutationResult.isError, updateCourseMutationResult.isLoading, updateCourseMutationResult.isSuccess])
 
     return (
-        <CourseForm
-            values={values}
-            errors={errors}
-            touched={touched}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            isLoading={isLoading}
-            isValid={true}
-            onSubmitHandler={onSubmitHandler}
-            setFieldValue={setFieldValue}
-        />
+        <div className='xl:px-60'>
+            <CourseForm
+                values={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                isLoading={isLoading}
+                isValid={true}
+                onSubmitHandler={onSubmitHandler}
+                setFieldValue={setFieldValue}
+            />
+        </div>
     )
 }
