@@ -21,9 +21,9 @@ const CourseList: React.FC<CourseListProps> = (props) => {
 
     return (
         isLoading
-            ? <div className='flex flex-col items-center justify-center'>
+            ? <div className='flex flex-col items-center justify-center w-full'>
                 <div className='sm:flex items-center justify-center p-2 w-full gap-4'>
-                    <Skeleton variant='rectangular' className='basis-1/3 rounded-lg w-full h-40' />
+                    <Skeleton variant='rectangular' height={100} className='basis-1/3 rounded-lg w-full h-40' />
                     <div className='flex flex-col basis-2/3'>
                         <Skeleton variant='text' className='rounded-lg w-full' />
                         <Skeleton variant='text' className='rounded-lg w-full' />
@@ -32,7 +32,7 @@ const CourseList: React.FC<CourseListProps> = (props) => {
                     </div>
                 </div>
                 <div className='sm:flex items-center justify-center p-2 w-full h-60 gap-4'>
-                    <Skeleton variant='rectangular' className='basis-1/3 rounded-lg w-full h-40' />
+                    <Skeleton variant='rectangular' height={100} className='basis-1/3 rounded-lg w-full h-40' />
                     <div className='flex flex-col basis-2/3'>
                         <Skeleton variant='text' className='rounded-lg w-full' />
                         <Skeleton variant='text' className='rounded-lg w-full' />
