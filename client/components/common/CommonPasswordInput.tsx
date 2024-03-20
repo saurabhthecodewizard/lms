@@ -31,7 +31,7 @@ const CommonPasswordInput: React.FC<CommonPasswordInputProps> = (props) => {
                     autoComplete="current-password"
                     placeholder='**********'
                     required
-                    className={`${errors.length && 'border-red-500'} block w-full rounded-md border-0 p-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
+                    className={`${errors.length && 'border-red-500'} block w-full focus-visible:outline-none focus-visible:border-2 focus-visible:border-orange-500 rounded-md border-0 p-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6`}
                 />
                 {
                     showPassword ? (

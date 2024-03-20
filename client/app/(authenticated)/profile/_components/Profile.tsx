@@ -13,6 +13,7 @@ import CommonButton from '@/components/common/CommonButton';
 import CommonPasswordInput from '@/components/common/CommonPasswordInput';
 import useStringState from '@/hooks/useStringState';
 import ProfilePic from '@/components/common/ProfilePic';
+import { CircularProgress } from '@mui/material';
 
 const initialState: UserProfile = {
     id: '',
@@ -223,18 +224,22 @@ const Profile = () => {
     }, [changePasswordResult.data, changePasswordResult.error, changePasswordResult.isError, changePasswordResult.isSuccess]);
 
     return (
-        <div className='flex flex-col items-center justify-center'>
-            <ProfilePic
-                loading={isLoading || changePasswordResult.isLoading}
-                name={data?.user.firstName + `${!!data?.user.lastName ? ' ' + data.user.lastName : ''}`}
-                email={data?.user.email ?? ''}
-                url={data?.user.avatar?.url}
-                onChange={onImageChange}
-            />
-            <div className='flex items-center justify-center'>
-                <GenericTab items={tabItems} />
+        isLoading
+            ? <div className="flex w-full items-center justify-center">
+                <CircularProgress />
             </div>
-        </div>
+            : <div className='flex flex-col items-center justify-center'>
+                <ProfilePic
+                    loading={isLoading || changePasswordResult.isLoading}
+                    name={data?.user.firstName + `${!!data?.user.lastName ? ' ' + data.user.lastName : ''}`}
+                    email={data?.user.email ?? ''}
+                    url={data?.user.avatar?.url}
+                    onChange={onImageChange}
+                />
+                <div className='flex items-center justify-center'>
+                    <GenericTab items={tabItems} />
+                </div>
+            </div>
     )
 }
 

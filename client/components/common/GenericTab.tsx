@@ -57,9 +57,9 @@ const GenericTab: React.FC<GenericTabProps> = (props) => {
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" className="text-slate-900 dark:text-slate-50">
                     {items.map((item, index) => (
-                        <Tab key={index} label={item.label} className="text-orange-500" {...a11yProps(index)} />
+                        <Tab key={index} label={item.label} className="text-slate-900 dark:text-slate-50" {...a11yProps(index)} />
                     ))}
                 </Tabs>
             </Box>
