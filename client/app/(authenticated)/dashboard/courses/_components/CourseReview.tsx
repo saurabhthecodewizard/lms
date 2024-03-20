@@ -12,11 +12,12 @@ import Review from '@/redux/interfaces/courses/review.interface';
 
 interface CourseReviewProps {
     courseId: string;
+    showAddReview?: boolean;
     reviews: Review[];
 }
 
 const CourseReview: React.FC<CourseReviewProps> = (props) => {
-    const { courseId, reviews = [] } = props;
+    const { courseId, reviews = [], showAddReview = true } = props;
     const [review, setReview] = React.useState('');
     const [modalOpen, setModalOpen] = React.useState(false);
     const [rating, setRating] = React.useState<number | null>(4.5);
@@ -57,24 +58,26 @@ const CourseReview: React.FC<CourseReviewProps> = (props) => {
 
     return (
         <div className='flex flex-col w-full gap-8'>
-            <CommonButton onClick={onModalOpenHandler} theme='solid' className='w-fit self-center'>Add Your Review</CommonButton>
-            <AcadiaModal
-                open={modalOpen}
-                onModalClose={onModalCloseHandler}
-                headerText='Add your review'
-                onPrimaryAction={submitAddCommentHandler}
-                onCancel={onModalCloseHandler}
-            >
-                <div className='w-full flex flex-col items-center justify-center'>
-                    <AcadiaHoverRating value={rating} setValue={setRating} />
-                    <CommonTextArea
-                        id='comment'
-                        placeholder='What did you like the most about the course?'
-                        value={review}
-                        onChange={onCommentChangeHandler}
-                    />
-                </div>
-            </AcadiaModal>
+            {showAddReview && <>
+                <CommonButton onClick={onModalOpenHandler} theme='solid' className='w-fit self-center'>Add Your Review</CommonButton>
+                <AcadiaModal
+                    open={modalOpen}
+                    onModalClose={onModalCloseHandler}
+                    headerText='Add your review'
+                    onPrimaryAction={submitAddCommentHandler}
+                    onCancel={onModalCloseHandler}
+                >
+                    <div className='w-full flex flex-col items-center justify-center'>
+                        <AcadiaHoverRating value={rating} setValue={setRating} />
+                        <CommonTextArea
+                            id='comment'
+                            placeholder='What did you like the most about the course?'
+                            value={review}
+                            onChange={onCommentChangeHandler}
+                        />
+                    </div>
+                </AcadiaModal>
+            </>}
             <div className='flex flex-col gap-2'>
                 {reviews.map((comment) => (
                     <CourseReviewComment
