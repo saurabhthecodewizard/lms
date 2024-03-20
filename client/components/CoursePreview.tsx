@@ -59,7 +59,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
     const [visibleCourseSection, setVisibleCourseSection] = React.useState(-1);
 
     return (
-        <div className='flex flex-col items-center justify-center gap-4 pb-4'>
+        <div className='flex flex-col items-center justify-center gap-4 pb-4 bg-slate-50 dark:bg-slate-900'>
             <Image
                 alt={course.name}
                 src={course.thumbnail ?? ''}
@@ -110,7 +110,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                     </div>
                 </div>
             </div>
-            <div className='flex flex-col gap-4 w-full'>
+            <div className='flex flex-col gap-4 w-full px-4'>
                 {!enrolled && <div className='flex flex-col'>
                     <Heading>Course Overview</Heading>
                     <div className='flex flex-col gap-2 mt-2'>
