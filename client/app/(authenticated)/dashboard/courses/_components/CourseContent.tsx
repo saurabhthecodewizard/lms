@@ -8,6 +8,7 @@ import LectureOverview from './LectureOverview';
 import CourseDiscussions from './CourseDiscussions';
 import Comment from '@/redux/interfaces/courses/comment.interface';
 import CourseReview from './CourseReview';
+import { useFetchEnrolledCourseDataQuery } from '@/redux/features/courses/course.api';
 
 interface CourseContentProps {
     id: string;
@@ -20,14 +21,18 @@ interface CourseContentProps {
 const CourseContent: React.FC<CourseContentProps> = (props) => {
     const { id, title, description, videoUrl, content } = props;
     const [selectedContent, setSelectedContent] = React.useState<EnrolledCourseData | null>(null);
+    const [selectedContentId, setSelectedContentId] = React.useState(-1);
+    const { isFetching, isSuccess } = useFetchEnrolledCourseDataQuery(id);
 
     const onLectureClickHandler = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        const id = event.currentTarget.id;
-        if (!id || id === 'preview') {
+        const contentId = event.currentTarget.id;
+        if (!contentId || contentId === 'preview') {
+            setSelectedContentId(-1);
             setSelectedContent(null);
         } else {
-            setSelectedContent(content[Number(id)]);
+            setSelectedContentId(Number(contentId));
+            setSelectedContent(content[Number(contentId)]);
         }
     }, [content]);
 
@@ -44,10 +49,6 @@ const CourseContent: React.FC<CourseContentProps> = (props) => {
                     description={!!selectedContent ? selectedContent.description : description}
                     length={!!selectedContent ? selectedContent.videoLength : undefined}
                 />
-            },
-            {
-                label: 'Reviews',
-                node: <CourseReview />
             }
         ];
 
@@ -64,6 +65,16 @@ const CourseContent: React.FC<CourseContentProps> = (props) => {
 
         return items;
     }, [content, description, id, onLectureClickHandler, selectedContent, title]);
+
+    React.useEffect(() => {
+        if (!isFetching && isSuccess) {
+            if (selectedContentId === -1) {
+                setSelectedContent(null);
+            } else {
+                setSelectedContent(content[selectedContentId]);
+            }
+        }
+    }, [content, isFetching, isSuccess, selectedContentId]);
 
     return (
         <div className='flex flex-col gap-4 w-full'>

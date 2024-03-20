@@ -1,5 +1,6 @@
 import CloudinaryImage from "../cloudinaryImage.interface";
 import CourseDataInfo from "./courseDataInfo.interface";
+import Review from "./review.interface";
 
 interface CourseInfo {
     _id: string;
@@ -11,7 +12,7 @@ interface CourseInfo {
     tags: string;
     level: string;
     rating?: number;
-    reviews: [];
+    reviews: Review[];
     demoUrl: string;
     benefits: {
         title: string;

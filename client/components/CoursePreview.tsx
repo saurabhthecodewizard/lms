@@ -6,6 +6,7 @@ import CommonButton from './common/CommonButton';
 import { IoCheckmarkDone } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import CourseRating from './common/features/CourseRating';
+import Review from '@/redux/interfaces/courses/review.interface';
 
 interface PreviewCourseData {
     title: string;
@@ -14,7 +15,7 @@ interface PreviewCourseData {
     videoLength: number;
 }
 
-interface PreviewCourse {
+export interface PreviewCourse {
     name: string;
     description: string;
     price: number;
@@ -31,6 +32,7 @@ interface PreviewCourse {
     }[];
     courseData: PreviewCourseData[];
     rating?: number;
+    reviews?: Review[];
 }
 
 interface CoursePreviewProps {

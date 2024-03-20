@@ -1,6 +1,6 @@
 interface CreateReview {
     comment: string;
-    rating: string;
+    rating: number;
 }
 
 export default CreateReview;

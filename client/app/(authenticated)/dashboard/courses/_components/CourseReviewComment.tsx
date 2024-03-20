@@ -1,26 +1,28 @@
-import CommonButton from "@/components/common/CommonButton";
-import CommonInput from "@/components/common/CommonInput";
-import useProfile from "@/hooks/useProfile";
-import { useAddCommentReplyMutation, useFetchEnrolledCourseDataQuery } from "@/redux/features/courses/course.api";
-import Comment from "@/redux/interfaces/courses/comment.interface";
-import React from "react";
-import toast from "react-hot-toast";
-import { FaPencilAlt } from "react-icons/fa";
-import { GrUserAdmin } from "react-icons/gr";
-import { LuUserCircle } from "react-icons/lu";
+import AcadiaHoverRating from '@/components/common/AcadiaHoverRating';
+import CommonButton from '@/components/common/CommonButton';
+import CommonInput from '@/components/common/CommonInput';
+import useProfile from '@/hooks/useProfile';
+import { useAddReviewReplyMutation, useFetchCourseQuery } from '@/redux/features/courses/course.api';
+import Comment from '@/redux/interfaces/courses/comment.interface';
+import React from 'react'
+import toast from 'react-hot-toast';
+import { FaPencilAlt } from 'react-icons/fa';
+import { GrUserAdmin } from 'react-icons/gr';
+import { LuUserCircle } from 'react-icons/lu';
 
-interface CourseCommentProps {
+interface CourseReviewCommentProps {
     courseId: string;
-    contentId: string;
+    rating: number;
     comment: Comment;
     level?: number;
 }
 
-const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comment, level = 0 }) => {
+const CourseReviewComment: React.FC<CourseReviewCommentProps> = (props) => {
+    const { courseId, comment, level = 0, rating } = props;
     const [isReplyToggle, setIsReplyToggle] = React.useState(false);
     const [reply, setReply] = React.useState('');
-    const [addCommentReply, addCommentReplyResult] = useAddCommentReplyMutation();
-    const { refetch: refetchEnrolledCourse } = useFetchEnrolledCourseDataQuery(courseId);
+    const [addReviewReply, addReviewReplyResult] = useAddReviewReplyMutation();
+    const { refetch: refetchCourse } = useFetchCourseQuery(courseId);
     const { isAdmin } = useProfile();
 
     const onIsReplyToggleHandler = React.useCallback(() => {
@@ -34,18 +36,17 @@ const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comm
 
     const onReplySubmitHandler = React.useCallback(() => {
         if (reply.length === 0) {
-            toast.error('Reply is mandatory!');
+            toast.error('Reply cannot be empty!');
             return;
         }
-        addCommentReply({
+        addReviewReply({
             courseId: courseId,
-            reply: {
-                contentId: contentId,
-                commentId: comment._id,
-                reply: reply
+            reviewId: comment._id,
+            reviewReply: {
+                comment: reply
             }
         })
-    }, [addCommentReply, comment._id, contentId, courseId, reply]);
+    }, [addReviewReply, comment._id, courseId, reply]);
 
     const renderReplies = React.useCallback((replies: Comment[]) => {
         return (
@@ -54,10 +55,10 @@ const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comm
                     <li key={reply._id} className="">
                         <div className="flex items-start">
                             <div className={`${index === replies.length - 1 ? 'hidden' : 'block'}`} />
-                            <CourseComment
+                            <CourseReviewComment
                                 courseId={courseId}
-                                contentId={contentId}
                                 comment={reply}
+                                rating={rating}
                                 level={level + 1} />
                         </div>
                     </li>
@@ -65,27 +66,28 @@ const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comm
             </ul>
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contentId, courseId, level, comment?.replies?.length]);
+    }, [courseId, level, comment?.replies?.length]);
 
     React.useEffect(() => {
-        if (addCommentReplyResult.isSuccess && !addCommentReplyResult.isLoading) {
+        if (addReviewReplyResult.isSuccess && !addReviewReplyResult.isLoading) {
             toast.success('Reply successful');
             setIsReplyToggle(false);
             setReply('');
-            refetchEnrolledCourse();
+            refetchCourse();
         }
-    }, [addCommentReplyResult.isLoading, addCommentReplyResult.isSuccess, refetchEnrolledCourse]);
+    }, [addReviewReplyResult.isLoading, addReviewReplyResult.isSuccess, refetchCourse]);
 
     return (
         <div className="px-4 py-2 bg-slate-300 dark:bg-slate-700 rounded-lg">
             <div className="flex w-full">
-                {isAdmin
-                    ? <GrUserAdmin size={25} />
-                    : <LuUserCircle size={25} className='' />}
+                {!level
+                    ? <LuUserCircle size={25} className='' />
+                    : <GrUserAdmin size={25} />}
                 <div className="ml-2 w-full">
                     <h3 className="font-semibold">{comment.user.firstName} {comment.user.lastName}</h3>
+                    {!level && <AcadiaHoverRating value={rating} readOnly />}
                     <p className="text-slate-600 dark:text-slate-400">{comment.comment}</p>
-                    {!level && <>
+                    {!level && isAdmin && <>
                         {isReplyToggle
                             ? <div className="flex flex-col gap-2 w-full mt-2">
                                 <CommonInput
@@ -95,7 +97,7 @@ const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comm
                                     onChange={onReplyChangeHandler}
                                 />
                                 <div className="flex gap-2 items-center">
-                                    <CommonButton onClick={onReplySubmitHandler} theme="solid" className="py-0 px-1" disabled>
+                                    <CommonButton onClick={onReplySubmitHandler} theme="solid" className="py-0 px-1">
                                         Reply
                                     </CommonButton>
                                     <CommonButton onClick={onIsReplyToggleHandler} theme="outline" className="py-0 px-1">
@@ -113,6 +115,6 @@ const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comm
             {comment.replies && comment.replies.length > 0 && renderReplies(comment.replies)}
         </div>
     );
-};
+}
 
-export default CourseComment;
+export default CourseReviewComment;

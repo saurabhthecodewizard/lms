@@ -13,10 +13,11 @@ interface CommonTextAreaProps {
     labelClassName?: string;
     inputClassName?: string;
     disabled?: boolean;
+    rows?: number;
 }
 
 const CommonTextArea: React.FC<CommonTextAreaProps> = (props) => {
-    const { id, label, value, onChange, autoComplete, placeholder, required, showError, errors, labelClassName, inputClassName, disabled } = props;
+    const { id, label, value, onChange, autoComplete, placeholder, required, showError, errors, labelClassName, inputClassName, rows = 5, disabled } = props;
     return (
         <div className='w-full'>
             <label
@@ -35,6 +36,7 @@ const CommonTextArea: React.FC<CommonTextAreaProps> = (props) => {
                     placeholder={placeholder}
                     required={required}
                     disabled={disabled}
+                    rows={rows}
                     className={`${showError && errors && 'border-red-500'} block w-full rounded-md border-0 p-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 ${inputClassName}`} />
             </div>
             {
