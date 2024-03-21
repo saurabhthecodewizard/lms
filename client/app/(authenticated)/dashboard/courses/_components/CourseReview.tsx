@@ -9,6 +9,7 @@ import Comment from '@/redux/interfaces/courses/comment.interface';
 import AcadiaModal from '@/components/common/AcadiaModal';
 import AcadiaHoverRating from '@/components/common/AcadiaHoverRating';
 import Review from '@/redux/interfaces/courses/review.interface';
+import useNotify from '@/hooks/useNotify';
 
 interface CourseReviewProps {
     courseId: string;
@@ -23,6 +24,7 @@ const CourseReview: React.FC<CourseReviewProps> = (props) => {
     const [rating, setRating] = React.useState<number | null>(4.5);
     const [addReview, addReviewResult] = useAddReviewMutation();
     const { refetch: refetchCourse } = useFetchCourseQuery(courseId);
+    const notify = useNotify();
 
     const onModalCloseHandler = React.useCallback(() => {
         setModalOpen(false);
@@ -53,8 +55,9 @@ const CourseReview: React.FC<CourseReviewProps> = (props) => {
             refetchCourse();
             setReview('');
             onModalCloseHandler();
+            notify();
         }
-    }, [addReviewResult.isLoading, addReviewResult.isSuccess, onModalCloseHandler, refetchCourse]);
+    }, [addReviewResult.isLoading, addReviewResult.isSuccess, notify, onModalCloseHandler, refetchCourse]);
 
     return (
         <div className='flex flex-col w-full gap-8'>

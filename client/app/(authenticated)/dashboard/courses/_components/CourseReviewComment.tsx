@@ -1,6 +1,7 @@
 import AcadiaHoverRating from '@/components/common/AcadiaHoverRating';
 import CommonButton from '@/components/common/CommonButton';
 import CommonInput from '@/components/common/CommonInput';
+import useNotify from '@/hooks/useNotify';
 import useProfile from '@/hooks/useProfile';
 import { useAddReviewReplyMutation, useFetchCourseQuery } from '@/redux/features/courses/course.api';
 import Comment from '@/redux/interfaces/courses/comment.interface';
@@ -24,6 +25,7 @@ const CourseReviewComment: React.FC<CourseReviewCommentProps> = (props) => {
     const [addReviewReply, addReviewReplyResult] = useAddReviewReplyMutation();
     const { refetch: refetchCourse } = useFetchCourseQuery(courseId);
     const { isAdmin } = useProfile();
+    const notify = useNotify();
 
     const onIsReplyToggleHandler = React.useCallback(() => {
         setReply('');
@@ -74,8 +76,9 @@ const CourseReviewComment: React.FC<CourseReviewCommentProps> = (props) => {
             setIsReplyToggle(false);
             setReply('');
             refetchCourse();
+            notify();
         }
-    }, [addReviewReplyResult.isLoading, addReviewReplyResult.isSuccess, refetchCourse]);
+    }, [addReviewReplyResult.isLoading, addReviewReplyResult.isSuccess, notify, refetchCourse]);
 
     return (
         <div className="px-4 py-2 bg-slate-300 dark:bg-slate-700 rounded-lg">

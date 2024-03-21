@@ -6,6 +6,7 @@ import React from 'react'
 import { LuUserCircle } from 'react-icons/lu';
 import CourseComment from './CourseComment';
 import toast from 'react-hot-toast';
+import useNotify from '@/hooks/useNotify';
 
 interface CourseDiscussionsProps {
     courseId: string;
@@ -18,6 +19,7 @@ const CourseDiscussions: React.FC<CourseDiscussionsProps> = (props) => {
     const [comment, setComment] = React.useState('');
     const [addComment, addCommentResult] = useAddCommentMutation();
     const { refetch: refetchEnrolledCourse } = useFetchEnrolledCourseDataQuery(courseId);
+    const notify = useNotify();
 
     const onCommentChangeHandler = React.useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setComment(event.currentTarget.value);
@@ -37,8 +39,9 @@ const CourseDiscussions: React.FC<CourseDiscussionsProps> = (props) => {
             toast.success('Comment added successfully');
             refetchEnrolledCourse();
             setComment('');
+            notify();
         }
-    }, [addCommentResult.isLoading, addCommentResult.isSuccess, refetchEnrolledCourse]);
+    }, [addCommentResult.isLoading, addCommentResult.isSuccess, notify, refetchEnrolledCourse]);
 
     return (
         <div className='flex flex-col w-full gap-8'>

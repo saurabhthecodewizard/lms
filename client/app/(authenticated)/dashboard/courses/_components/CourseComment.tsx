@@ -1,5 +1,6 @@
 import CommonButton from "@/components/common/CommonButton";
 import CommonInput from "@/components/common/CommonInput";
+import useNotify from "@/hooks/useNotify";
 import useProfile from "@/hooks/useProfile";
 import { useAddCommentReplyMutation, useFetchEnrolledCourseDataQuery } from "@/redux/features/courses/course.api";
 import Comment from "@/redux/interfaces/courses/comment.interface";
@@ -22,6 +23,7 @@ const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comm
     const [addCommentReply, addCommentReplyResult] = useAddCommentReplyMutation();
     const { refetch: refetchEnrolledCourse } = useFetchEnrolledCourseDataQuery(courseId);
     const { isAdmin } = useProfile();
+    const notify = useNotify();
 
     const onIsReplyToggleHandler = React.useCallback(() => {
         setReply('');
@@ -73,8 +75,9 @@ const CourseComment: React.FC<CourseCommentProps> = ({ courseId, contentId, comm
             setIsReplyToggle(false);
             setReply('');
             refetchEnrolledCourse();
+            notify();
         }
-    }, [addCommentReplyResult.isLoading, addCommentReplyResult.isSuccess, refetchEnrolledCourse]);
+    }, [addCommentReplyResult.isLoading, addCommentReplyResult.isSuccess, notify, refetchEnrolledCourse]);
 
     return (
         <div className="px-4 py-2 bg-slate-300 dark:bg-slate-700 rounded-lg">
