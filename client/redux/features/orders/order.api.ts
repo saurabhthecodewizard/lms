@@ -29,6 +29,13 @@ export const ordersApi = apiSlice.injectEndpoints({
                 credentials: 'include' as const
             })
         }),
+        freeCourse: builder.mutation<void, string>({
+            query: (courseId) => ({
+                url: `course/${courseId}/free`,
+                method: 'POST',
+                credentials: 'include' as const
+            })
+        }),
         validateOrder: builder.mutation<void, VerifyOrder>({
             query: (data) => ({
                 url: `order/validate`,
@@ -40,4 +47,4 @@ export const ordersApi = apiSlice.injectEndpoints({
     })
 })
 
-export const { useFetchAllOrdersQuery, useCreateOrderMutation, useValidateOrderMutation } = ordersApi
+export const { useFetchAllOrdersQuery, useCreateOrderMutation, useValidateOrderMutation, useFreeCourseMutation } = ordersApi

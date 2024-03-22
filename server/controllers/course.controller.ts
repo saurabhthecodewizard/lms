@@ -104,7 +104,13 @@ export const getAllAvailableCourses = CatchAsyncError(async (_req: Request, res:
 
 export const getEnrolledCourses = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const allEnrolledCourses = req.user?.courses;
+        const user = await getUserById(req.user?._id);
+
+        if (!user) {
+            return next(new GlobalErrorHandler("Something went wrong!", 404));
+        }
+
+        const allEnrolledCourses = user.courses;
 
         if (!allEnrolledCourses) {
             return next(new GlobalErrorHandler("Something went wrong!", 404));

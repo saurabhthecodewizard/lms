@@ -179,3 +179,77 @@ export const fetchAllOrders = CatchAsyncError(async (req: Request, res: Response
         return next(new GlobalErrorHandler(err.message, 500));
     }
 });
+
+export const getFreeCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const courseId = req.params.id;
+
+        const user = await UserModel.findById(req.user?._id);
+
+        if (!user) {
+            return next(new GlobalErrorHandler("Invalid login!", 400));
+        }
+
+        try {
+
+            const course = await getCourseById(courseId);
+
+            if (!course) {
+                return next(new GlobalErrorHandler("Course not found!", 400));
+            }
+
+            const mailData: any = {
+                order: {
+                    _id: course._id.toString().slice(0, 6),
+                    name: course.name,
+                    price: 0.0,
+                    date: new Date().toLocaleDateString("en-US", {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })
+                },
+                user: {
+                    firstName: user.firstName
+                }
+            };
+
+            const html = await ejs.renderFile(path.join(__dirname, '../mails/order-confirmation.ejs'), mailData);
+
+            try {
+                await sendMail({
+                    email: user.email,
+                    subject: "Order Confirmation",
+                    template: "order-confirmation.ejs",
+                    data: mailData
+                })
+            } catch (error: any) {
+                return next(new GlobalErrorHandler(error.message, 500));
+            }
+
+            user.courses.push(course._id);
+            await saveUser(user);
+
+            await createNotification({
+                user: user._id,
+                title: "New Order",
+                message: `You have a new order from ${course.name}`
+            });
+
+            if (!course.purchased) {
+                course.purchased = 0;
+            }
+            course.purchased += 1;
+
+            await saveCourse(course);
+        } catch (error: any) {
+            return next(new GlobalErrorHandler(error.message, 500));
+        }
+
+        res.status(200).json({
+            success: true
+        })
+    } catch (err: any) {
+        return next(new GlobalErrorHandler(err.message, 500));
+    }
+});

@@ -8,7 +8,7 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import CourseRating from './common/features/CourseRating';
 import Review from '@/redux/interfaces/courses/review.interface';
 import CourseReview from '@/app/(authenticated)/dashboard/courses/_components/CourseReview';
-import { useCreateOrderMutation, useValidateOrderMutation } from '@/redux/features/orders/order.api';
+import { useCreateOrderMutation, useFreeCourseMutation, useValidateOrderMutation } from '@/redux/features/orders/order.api';
 import RazorpayOptions from '@/types/razorpayOptions.interface';
 import VerifyOrder from '@/redux/interfaces/orders/verifyOrder.interface';
 import toast from 'react-hot-toast';
@@ -68,6 +68,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
     const [orderId, setOrderId] = React.useState('');
     const [createOrderMutation, createOrderMutationResult] = useCreateOrderMutation();
     const [validateOrderMutation, validateOrderMutationResult] = useValidateOrderMutation();
+    const [freeCourseMutation, freeCourseMutationResult] = useFreeCourseMutation();
 
     const razorpayOptions = React.useMemo((): RazorpayOptions => {
         return {
@@ -97,9 +98,13 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
 
     const onClickBuyNowHandler = React.useCallback(() => {
         if (course._id) {
-            createOrderMutation(course._id);
+            if (!!course.price) {
+                createOrderMutation(course._id);
+            } else {
+                freeCourseMutation(course._id);
+            }
         }
-    }, [course._id, createOrderMutation]);
+    }, [course._id, course.price, createOrderMutation, freeCourseMutation]);
 
     React.useEffect(() => {
         if (!createOrderMutationResult.isLoading && createOrderMutationResult.isSuccess && createOrderMutationResult.data) {
@@ -119,9 +124,17 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
 
     React.useEffect(() => {
         if (!validateOrderMutationResult.isLoading && validateOrderMutationResult.isSuccess) {
+            toast.success('Course purchased successfully')
             router.push('/dashboard')
         }
     }, [router, validateOrderMutationResult.isLoading, validateOrderMutationResult.isSuccess]);
+
+    React.useEffect(() => {
+        if (!freeCourseMutationResult.isLoading && freeCourseMutationResult.isSuccess) {
+            toast.success('Course purchased successfully')
+            router.push('/dashboard')
+        }
+    }, [router, freeCourseMutationResult.isLoading, freeCourseMutationResult.isSuccess]);
 
     return (
         <div className='flex flex-col items-center justify-center gap-4 pb-4 bg-slate-50 dark:bg-slate-900'>
@@ -138,14 +151,16 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                     {!enrolled
                         ? <div className='flex sm:flex-col gap-2 justify-between sm:justify-start'>
                             <div className='flex items-center gap-2'>
-                                <p className='text-xl font-bold'>€{course.price}</p>
+                                {!!course.price
+                                    ? <p className='text-xl font-bold'>€{course.price}</p>
+                                    : <p className='text-xl font-bold'>€{course.price}</p>}
                                 {course.estimatedPrice && <>
                                     <p className='text-sm line-through'>€{course.estimatedPrice}</p>
                                     <p>{Math.round(((course.estimatedPrice - course.price) / course.estimatedPrice) * 100)}% OFF</p>
                                 </>}
                             </div>
-                            <CommonButton onClick={onClickBuyNowHandler} theme='solid' className='w-fit' rounded='full'>
-                                BUY NOW
+                            <CommonButton onClick={onClickBuyNowHandler} theme='solid' className='w-fit' rounded='full' loading={createOrderMutationResult.isLoading || validateOrderMutationResult.isLoading || freeCourseMutationResult.isLoading}>
+                                {!!course.price ? 'BUY NOW' : 'FREE'}
                             </CommonButton>
                         </div>
                         : <div className='flex items-center justify-center'>
