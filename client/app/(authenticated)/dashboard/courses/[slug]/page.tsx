@@ -11,7 +11,7 @@ import CourseReview from "../_components/CourseReview";
 
 export default function Page({ params }: { params: { slug: string } }) {
     const { data, isLoading, isSuccess } = useFetchCourseQuery(params.slug);
-    const { data: enrolledData, isLoading: isEnrolledLoading, isSuccess: isEnrolledSuccess, isError: isEnrolledError } = useFetchEnrolledCourseDataQuery(params.slug);
+    const { data: enrolledData, isLoading: isEnrolledLoading, isSuccess: isEnrolledSuccess, isError: isEnrolledError, refetch: refetchEnrolledCourse } = useFetchEnrolledCourseDataQuery(params.slug);
     const [course, setCourse] = React.useState<PreviewCourse | null>(null);
 
     const isEnrolled = React.useMemo(() => {

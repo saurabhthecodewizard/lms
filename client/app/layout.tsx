@@ -6,6 +6,7 @@ import { StoreProvider } from '@/redux/StoreProvider';
 import { Metadata } from 'next';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import theme from '@/utils/mui-theme';
+import Script from 'next/script';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -35,17 +36,20 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.variable} ${josefin.variable} bg-slate-200 dark:bg-slate-800 dark:to-slate-800 duration-300 text-gray-900 dark:text-gray-200`}>
-        <StoreProvider>
-          <ThemeProvider attribute='class' defaultTheme='system' enableSystem >
-            <MuiThemeProvider theme={theme}>
-              {children}
-              <Toaster position='top-center' reverseOrder={false} />
-            </MuiThemeProvider>
-          </ThemeProvider>
-        </StoreProvider>
-      </body>
-    </html>
+    <>
+      <html lang="en">
+        <body className={`${poppins.variable} ${josefin.variable} bg-slate-200 dark:bg-slate-800 dark:to-slate-800 duration-300 text-gray-900 dark:text-gray-200`}>
+          <StoreProvider>
+            <ThemeProvider attribute='class' defaultTheme='system' enableSystem >
+              <MuiThemeProvider theme={theme}>
+                {children}
+                <Toaster position='top-center' reverseOrder={false} />
+              </MuiThemeProvider>
+            </ThemeProvider>
+          </StoreProvider>
+        </body>
+      </html>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+    </>
   )
 }

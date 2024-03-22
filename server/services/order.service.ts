@@ -1,5 +1,5 @@
 import CourseModel from "../models/course.model";
-import OrderModel from "../models/order.model";
+import OrderModel, { Order } from "../models/order.model";
 import UserModel from "../models/user.model";
 import { generateLastYearData } from "../utils/analytics.generator";
 
@@ -33,4 +33,8 @@ export const getAllOrders = async () => {
     }
 }
 
-export const getOrderAnalytics = () => generateLastYearData(OrderModel);
+export const getOrderById = (razorpayOrderId: string) => OrderModel.findOne({ orderId: razorpayOrderId });
+
+export const saveOrder = (order: Order) => order.save();
+
+export const getOrderAnalytics = () => generateLastYearData(OrderModel, { status: 'success' });

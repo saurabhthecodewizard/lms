@@ -5,8 +5,9 @@ interface Month {
     count: number;
 }
 
-export async function generateLastYearData<T extends Document> (
-    model: Model<T>
+export async function generateLastYearData<T extends Document>(
+    model: Model<T>,
+    whereClause?: any
 ): Promise<{ lastYearData: Month[] }> {
     const lastYearData: Month[] = []
     const currentDate = new Date();
@@ -23,10 +24,11 @@ export async function generateLastYearData<T extends Document> (
         });
 
         const count = await model.countDocuments({
+            ...whereClause,
             createdAt: {
                 $gte: startDate,
                 $lt: endDate
-            }
+            },
         })
 
         lastYearData.push({

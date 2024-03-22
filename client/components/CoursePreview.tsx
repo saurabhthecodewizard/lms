@@ -8,6 +8,11 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import CourseRating from './common/features/CourseRating';
 import Review from '@/redux/interfaces/courses/review.interface';
 import CourseReview from '@/app/(authenticated)/dashboard/courses/_components/CourseReview';
+import { useCreateOrderMutation, useValidateOrderMutation } from '@/redux/features/orders/order.api';
+import RazorpayOptions from '@/types/razorpayOptions.interface';
+import VerifyOrder from '@/redux/interfaces/orders/verifyOrder.interface';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface PreviewCourseData {
     title: string;
@@ -54,9 +59,69 @@ const CheckDoneText: React.FC<{ children: string }> = (props) => {
     </div>
 }
 
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || '';
+
 const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
     const { course, enrolled = false, isAdminPreview = false } = props;
+    const router = useRouter();
     const [visibleCourseSection, setVisibleCourseSection] = React.useState(-1);
+    const [orderId, setOrderId] = React.useState('');
+    const [createOrderMutation, createOrderMutationResult] = useCreateOrderMutation();
+    const [validateOrderMutation, validateOrderMutationResult] = useValidateOrderMutation();
+
+    const razorpayOptions = React.useMemo((): RazorpayOptions => {
+        return {
+            key: RAZORPAY_KEY_ID,
+            amount: course.price,
+            currency: 'EUR',
+            name: 'Acadia',
+            description: course.name,
+            image: 'https://i.ibb.co/94FH6Vf/acadia-logo-dark.png',
+            order_id: orderId,
+            handler: async (response) => {
+                validateOrderMutation(response);
+            },
+            prefill: {
+                name: 'Acadia',
+                email: 'opuscorppune@gmail.com',
+                contact: '9876512345'
+            },
+            notes: {
+                address: 'Razorpay Corporate Office'
+            },
+            theme: {
+                color: '#f97316'
+            }
+        }
+    }, [course.name, course.price, orderId, validateOrderMutation]);
+
+    const onClickBuyNowHandler = React.useCallback(() => {
+        if (course._id) {
+            createOrderMutation(course._id);
+        }
+    }, [course._id, createOrderMutation]);
+
+    React.useEffect(() => {
+        if (!createOrderMutationResult.isLoading && createOrderMutationResult.isSuccess && createOrderMutationResult.data) {
+            setOrderId(createOrderMutationResult.data.order.id);
+        }
+    }, [createOrderMutationResult.data, createOrderMutationResult.isLoading, createOrderMutationResult.isSuccess]);
+
+    React.useEffect(() => {
+        if (!!orderId && orderId !== '') {
+            const razorpayWindow = new (window as any).Razorpay(razorpayOptions);
+            razorpayWindow.on('payment.failed', function (response: any) {
+                toast.error('Payment failed');
+            });
+            razorpayWindow.open();
+        }
+    }, [orderId, razorpayOptions]);
+
+    React.useEffect(() => {
+        if (!validateOrderMutationResult.isLoading && validateOrderMutationResult.isSuccess) {
+            router.push('/dashboard')
+        }
+    }, [router, validateOrderMutationResult.isLoading, validateOrderMutationResult.isSuccess]);
 
     return (
         <div className='flex flex-col items-center justify-center gap-4 pb-4 bg-slate-50 dark:bg-slate-900'>
@@ -79,7 +144,7 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                                     <p>{Math.round(((course.estimatedPrice - course.price) / course.estimatedPrice) * 100)}% OFF</p>
                                 </>}
                             </div>
-                            <CommonButton theme='solid' className='w-fit' rounded='full'>
+                            <CommonButton onClick={onClickBuyNowHandler} theme='solid' className='w-fit' rounded='full'>
                                 BUY NOW
                             </CommonButton>
                         </div>
@@ -133,11 +198,11 @@ const CoursePreview: React.FC<CoursePreviewProps> = (props) => {
                     </div>
                 </div>}
 
-                {!enrolled && course._id && !!course.reviews && 
-                <div className='flex flex-col items-center justify-center gap-1'>
-                    <Heading>Reviews</Heading>
-                    <CourseReview courseId={course._id} reviews={course.reviews} showAddReview={false} />
-                </div>}
+                {!enrolled && course._id && !!course.reviews &&
+                    <div className='flex flex-col items-center justify-center gap-1'>
+                        <Heading>Reviews</Heading>
+                        <CourseReview courseId={course._id} reviews={course.reviews} showAddReview={false} />
+                    </div>}
             </div>
         </div>
     )

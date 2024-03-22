@@ -168,7 +168,7 @@ const Analytics = () => {
                             <LineChart data={ordersAnalyticsData}>
                                 <XAxis dataKey='name' />
                                 <YAxis />
-                                <Tooltip />
+                                <Tooltip labelClassName='text-slate-500' />
                                 <Line dataKey='uv' type='monotone' stroke='#f97316' fill='#f97316' />
                             </LineChart>
                         </ResponsiveContainer>

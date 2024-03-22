@@ -28,6 +28,11 @@ const columns: GridColDef[] = [
         headerName: 'Price',
         valueGetter: ({ value }) => '€' + value,
     },
+    {
+        field: 'status',
+        headerName: 'Status',
+        flex: 1,
+    },
 ];
 
 const OrdersGrid = () => {

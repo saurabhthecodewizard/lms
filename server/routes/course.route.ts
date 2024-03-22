@@ -1,6 +1,7 @@
 import express from 'express';
 import { authorizeRoles, isAuthenticated } from '../middleware/auth';
 import { addComment, addReply, addReview, addReviewReply, deleteCourse, fetchAllCourses, getAllAvailableCourses, getCourseInfo, getEnrolledCourse, getEnrolledCourses, updateExistingCourse, uploadCourse } from '../controllers/course.controller';
+import { createRazorpayOrder } from '../controllers/order.controller';
 
 const courseRouter = express.Router();
 
@@ -27,5 +28,7 @@ courseRouter.put('/course/:id/review/:reviewId', isAuthenticated, authorizeRoles
 courseRouter.get('/courses/all', isAuthenticated, authorizeRoles('admin'), fetchAllCourses);
 
 courseRouter.delete('/courses/:id', isAuthenticated, authorizeRoles('admin'), deleteCourse);
+
+courseRouter.post('/course/:id/order', isAuthenticated, createRazorpayOrder);
 
 export default courseRouter;
