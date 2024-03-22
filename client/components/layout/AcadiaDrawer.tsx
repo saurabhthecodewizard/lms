@@ -14,6 +14,7 @@ import { FaUsers } from 'react-icons/fa';
 import { MdOutlineAnalytics } from 'react-icons/md';
 import { SiSololearn } from 'react-icons/si';
 import { GoLog } from 'react-icons/go';
+import useProfile from '@/hooks/useProfile';
 
 interface DrawerItemProps {
     icon: IconType;
@@ -22,43 +23,54 @@ interface DrawerItemProps {
     onClick?: () => void;
 }
 
-const drawerItems: DrawerItemProps[] = [
-    {
-        label: 'Profile',
-        href: '/profile',
-        icon: IoPersonCircleOutline
-    },
-    {
-        label: 'Dashboard',
-        href: '/dashboard',
-        icon: RxDashboard
-    },
-    {
-        label: 'Logs',
-        href: '/admin/logs',
-        icon: MdOutlineAnalytics
-    },
-    {
-        label: 'Courses',
-        href: '/admin/courses',
-        icon: SiSololearn
-    },
-    {
-        label: 'Users',
-        href: '/admin/users',
-        icon: FaUsers
-    },
-    {
-        label: 'Invoices',
-        href: '/admin/orders',
-        icon: GoLog
-    }
-];
-
 const AcadiaDrawer = () => {
     const { isOpen } = useAppSelector(state => state.sidebar);
     const { isLoading, data } = useLoadUserQuery();
+    const { isAdmin } = useProfile();
     const dispatch = useAppDispatch();
+
+    const drawerItems = React.useMemo((): DrawerItemProps[] => {
+        const items = [
+            {
+                label: 'Profile',
+                href: '/profile',
+                icon: IoPersonCircleOutline
+            },
+            {
+                label: 'Dashboard',
+                href: '/dashboard',
+                icon: RxDashboard
+            }
+        ];
+
+        if (isAdmin) {
+            return [
+                ...items,
+                {
+                    label: 'Logs',
+                    href: '/admin/logs',
+                    icon: MdOutlineAnalytics
+                },
+                {
+                    label: 'Courses',
+                    href: '/admin/courses',
+                    icon: SiSololearn
+                },
+                {
+                    label: 'Users',
+                    href: '/admin/users',
+                    icon: FaUsers
+                },
+                {
+                    label: 'Invoices',
+                    href: '/admin/orders',
+                    icon: GoLog
+                }
+            ];
+        }
+
+        return items;
+    }, [isAdmin])
 
     const closeDrawer = React.useCallback(() => {
         dispatch(toggleSidebar(false));
