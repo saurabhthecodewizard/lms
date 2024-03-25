@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 // cross origin resource sharing
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://acadia-lms.vercel.app"],
     credentials: true
 }));
 
