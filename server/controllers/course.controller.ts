@@ -244,7 +244,8 @@ export const addReply = CatchAsyncError(async (req: Request, res: Response, next
         } else {
             const data = {
                 firstName: comment.user.firstName,
-                title: courseContent.title
+                title: courseContent.title,
+                origin: process.env.ORIGIN || ''
             }
 
             const html = await ejs.renderFile(

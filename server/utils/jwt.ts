@@ -14,14 +14,16 @@ export const tokenOptions = () => {
         expires: new Date(Date.now() + accessTokenExpiresIn * 60 * 60 * 1000),
         maxAge: accessTokenExpiresIn * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'none',
+        secure: true
     };
 
     const refreshTokenOptions: TokenOptions = {
         expires: new Date(Date.now() + refreshTokenExpiresIn * 24 * 60 * 60 * 1000),
         maxAge: refreshTokenExpiresIn * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'none',
+        secure: true
     };
 
     return {

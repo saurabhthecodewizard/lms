@@ -10,12 +10,9 @@ import orderRouter from './routes/order.route';
 import notificationRouter from './routes/notification.route';
 import analyticsRouter from './routes/analytics.route';
 import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { Strategy as GitHubStrategy } from 'passport-github';
 import authRouter from './routes/auth.route';
-import { getUserBySocialAuthId } from './services/user.service';
-import UserModel from './models/user.model';
 import { configureSocialAuthStrategy } from './utils/socialAuthStrategies';
+import { rateLimit } from 'express-rate-limit'
 
 // body parser
 app.use(express.json({ limit: "50mb" }));
@@ -28,6 +25,17 @@ app.use(cors({
     origin: ["http://localhost:3000"],
     credentials: true
 }));
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    // store: ... , // Redis, Memcached, etc. See below.
+})
+
+// Apply the rate limiting middleware to all requests.
+app.use(limiter)
 
 // routes
 app.use(

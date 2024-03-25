@@ -114,7 +114,8 @@ export const validateOrder = CatchAsyncError(async (req: Request, res: Response,
                 },
                 user: {
                     firstName: user.firstName
-                }
+                },
+                origin: process.env.ORIGIN || ''
             };
 
             const html = await ejs.renderFile(path.join(__dirname, '../mails/order-confirmation.ejs'), mailData);
@@ -211,7 +212,8 @@ export const getFreeCourse = CatchAsyncError(async (req: Request, res: Response,
                 },
                 user: {
                     firstName: user.firstName
-                }
+                },
+                origin: process.env.ORIGIN || ''
             };
 
             const html = await ejs.renderFile(path.join(__dirname, '../mails/order-confirmation.ejs'), mailData);
