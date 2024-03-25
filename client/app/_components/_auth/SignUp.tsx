@@ -14,6 +14,8 @@ import { FcGoogle } from 'react-icons/fc';
 import { AiFillGithub } from 'react-icons/ai';
 import AcadiaLogoSmall from '@/components/common/AcadiaLogoSmall';
 
+const NEXT_PUBLIC_ABSOLUTE_SERVER_URL = process.env.NEXT_PUBLIC_ABSOLUTE_SERVER_URL || "http://localhost:8000/"
+
 const schema = Yup.object().shape({
     firstName: Yup.string().required('Please enter your first name'),
     lastName: Yup.string().required('Please enter your last name'),
@@ -123,10 +125,10 @@ const SignUp: React.FC<FormProp> = (props) => {
                             Or Sign In with
                         </p>
                         <div className='flex items-center justify-center gap-3 mt-2'>
-                            <Link href='http://localhost:8000/auth/google' className='flex items-center justify-center'>
+                            <Link href={`${NEXT_PUBLIC_ABSOLUTE_SERVER_URL}auth/google`} className='flex items-center justify-center'>
                                 <FcGoogle size={30} className='cursor-pointer' />
                             </Link>
-                            <Link href='http://localhost:8000/auth/github' className='flex items-center justify-center'>
+                            <Link href={`${NEXT_PUBLIC_ABSOLUTE_SERVER_URL}auth/github`} className='flex items-center justify-center'>
                                 <AiFillGithub size={30} className='cursor-pointer' />
                             </Link>
                         </div>
